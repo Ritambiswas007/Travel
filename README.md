@@ -56,8 +56,16 @@ Optional:
    # Generate Prisma Client
    npm run prisma:generate
 
-   # Run migrations
+   # Create and run migrations (adds name field to User model)
    npm run prisma:migrate
+   
+   # Or if migrations already exist, deploy them
+   npm run prisma:migrate:deploy
+   ```
+
+   **Note**: The User model now includes a `name` field. If you have an existing database, create a migration:
+   ```bash
+   npx prisma migrate dev --name add_user_name_field
    ```
 
 5. **Build the project**
