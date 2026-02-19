@@ -1,0 +1,54 @@
+model Payment {
+  id                String        @id @default(uuid()) @db.Uuid
+  bookingId         String        @db.Uuid
+  amount            Decimal       @db.Decimal(12, 2)
+  currency          String        @default("INR")
+  status            PaymentStatus @default(PENDING)
+  provider          String
+  providerOrderId   String?       @unique
+  providerPaymentId String?
+  idempotencyKey    String?       @unique
+  metadata          Json?
+  paidAt            DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  booking       Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  refunds       Refund[]
+  transactions  Transaction[]
+
+  @@index([bookingId])
+  @@index([status])
+  @@index([providerOrderId])
+  @@index([idempotencyKey])
+}
+
+model Refund {
+  id            String   @id @default(uuid()) @db.Uuid
+  paymentId     String   @db.Uuid
+  amount        Decimal  @db.Decimal(12, 2)
+  reason        String?
+  providerRefId String?
+  status        String   @default("PENDING")
+  processedAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  payment Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+
+  @@index([paymentId])
+}
+
+model Transaction {
+  id            String   @id @default(uuid()) @db.Uuid
+  paymentId     String   @db.Uuid
+  type          String
+  amount        Decimal  @db.Decimal(12, 2)
+  providerTxnId String?
+  metadata      Json?
+  createdAt     DateTime @default(now())
+
+  payment Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+
+  @@index([paymentId])
+}

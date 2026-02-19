@@ -1,0 +1,13 @@
+// Travel & Pilgrimage Management Platform - Prisma Schema
+// Multi-file schema: enums, user/, and schemas/ are merged at generate.
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["prismaSchemaFolder"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}

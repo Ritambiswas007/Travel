@@ -1,0 +1,153 @@
+[0;34m╔════════════════════════════════════════╗[0m
+[0;34m║   API Endpoint Testing Suite         ║[0m
+[0;34m╚════════════════════════════════════════╝[0m
+
+Base URL: http://localhost:3000/api/v1
+
+[0;36m=== AUTHENTICATION TESTS ===[0m
+
+Creating test users...
+[0;32m✓[0m POST /auth/register - Create ADMIN user
+[0;32m✓[0m POST /auth/register - Create STAFF user
+[0;32m✓[0m POST /auth/register - Create USER
+[0;32m✓[0m POST /auth/login/email - Login as ADMIN
+[0;32m✓[0m POST /auth/login/email - Login as STAFF
+[0;32m✓[0m POST /auth/login/email - Login as USER
+[0;32m✓[0m POST /auth/send-otp - Send OTP
+
+[0;36m=== PACKAGES TESTS ===[0m
+
+[0;32m✓[0m GET /packages - List packages (public)
+[0;32m✓[0m GET /packages?page=1&limit=10 - List with pagination
+[0;32m✓[0m POST /packages - Create package (ADMIN)
+[0;32m✓[0m GET /packages/:id - Get package by ID
+[0;32m✓[0m PATCH /packages/:id - Update package (ADMIN)
+[0;32m✓[0m POST /packages/:id/variants - Add variant (ADMIN)
+[0;32m✓[0m POST /packages/:id/itineraries - Add itinerary (ADMIN)
+
+[0;36m=== CITIES TESTS ===[0m
+
+[0;32m✓[0m GET /cities - List cities (public)
+[0;32m✓[0m POST /cities - Create city (ADMIN)
+
+[0;36m=== USERS TESTS ===[0m
+
+[0;32m✓[0m GET /users/me - Get profile
+[0;32m✓[0m PATCH /users/me - Update profile
+[0;32m✓[0m GET /users/admin/users - List all users (ADMIN)
+
+[0;36m=== STAFF TESTS ===[0m
+
+[0;32m✓[0m POST /staff - Create staff (ADMIN)
+[0;32m✓[0m GET /staff - List staff (ADMIN)
+
+[0;36m=== COUPONS TESTS ===[0m
+
+[0;32m✓[0m POST /coupons - Create coupon (ADMIN)
+[0;32m✓[0m GET /coupons - List coupons (ADMIN)
+
+[0;36m=== BANNERS TESTS ===[0m
+
+[0;32m✓[0m GET /banners - List active banners (public)
+[0;32m✓[0m POST /banners - Create banner (ADMIN)
+
+[0;36m=== REVIEWS TESTS ===[0m
+
+[0;32m✓[0m GET /reviews - List reviews (public)
+[0;32m✓[0m POST /reviews - Create review (USER)
+
+[0;36m=== SUPPORT TESTS ===[0m
+
+[0;32m✓[0m POST /support - Create ticket (USER)
+[0;32m✓[0m GET /support - List my tickets (USER)
+
+[0;36m=== REPORTS TESTS ===[0m
+
+[0;32m✓[0m POST /reports - Create report (STAFF)
+[0;32m✓[0m GET /reports - List reports (STAFF)
+[0;32m✓[0m GET /reports/bookings - Bookings report (STAFF)
+[0;32m✓[0m GET /reports/revenue - Revenue report (STAFF)
+
+[0;36m=== BOOKINGS TESTS ===[0m
+
+[0;32m✓[0m GET /bookings/my - List my bookings (USER)
+[0;32m✓[0m GET /bookings/admin - List all bookings (STAFF)
+
+[0;36m=== VISA TESTS ===[0m
+
+[0;32m✓[0m GET /visa/my - List my visa applications (USER)
+
+[0;36m=== DOCUMENTS TESTS ===[0m
+
+[0;32m✓[0m GET /documents/types - List document types (public)
+[0;32m✓[0m GET /documents/my - List my documents (USER)
+
+[0;36m=== NOTIFICATIONS TESTS ===[0m
+
+[0;32m✓[0m GET /notifications - List my notifications (USER)
+
+[0;36m=== LEADS TESTS ===[0m
+
+[0;32m✓[0m POST /leads - Create lead (public)
+
+[0;36m=== ADDITIONAL ENDPOINTS ===[0m
+
+[0;32m✓[0m GET /health - Health check
+[0;32m✓[0m POST /auth/logout - Logout
+[0;32m✓[0m POST /auth/forgot-password - Forgot password
+[0;32m✓[0m GET /packages/slug/:slug - Get package by slug
+[0;32m✓[0m POST /packages/:id/schedules - Add schedule (ADMIN)
+[0;32m✓[0m GET /cities/:id - Get city by ID
+[0;32m✓[0m GET /cities/slug/:slug - Get city by slug
+[0;32m✓[0m PATCH /cities/:id - Update city (ADMIN)
+[0;32m✓[0m DELETE /cities/:id - Delete city (ADMIN)
+[0;32m✓[0m GET /staff/:id - Get staff by ID
+[0;32m✓[0m PATCH /staff/:id - Update staff (ADMIN)
+[0;32m✓[0m GET /coupons/:id - Get coupon by ID
+[0;32m✓[0m PATCH /coupons/:id - Update coupon (ADMIN)
+[0;32m✓[0m GET /banners/admin - List all banners (ADMIN)
+[0;32m✓[0m GET /banners/:id - Get banner by ID
+[0;32m✓[0m PATCH /banners/:id - Update banner (ADMIN)
+[0;32m✓[0m DELETE /banners/:id - Delete banner (ADMIN)
+[0;31m✗[0m GET /reviews/:id
+  [0;31mError:[0m HTTP 401
+[0;32m✓[0m PATCH /reviews/:id - Update review (USER)
+[0;32m✓[0m GET /support/:id - Get ticket
+[0;32m✓[0m POST /support/:id/reply - Reply to ticket
+[0;32m✓[0m POST /support/:id/close - Close ticket
+[0;32m✓[0m GET /reports/:id - Get report by ID
+[0;31m✗[0m POST /bookings - Create booking (USER)
+  [0;31mError:[0m HTTP 400
+[0;32m✓[0m POST /payments/orders - Create order
+[1;33m⊘[0m POST /transport/flight - Add flight (STAFF) (skipped)
+[1;33m⊘[0m POST /transport/train - Add train (STAFF) (skipped)
+[1;33m⊘[0m POST /transport/bus - Add bus (STAFF) (skipped)
+[0;31m✗[0m POST /visa - Create visa application (USER)
+  [0;31mError:[0m HTTP 400
+[0;31m✗[0m POST /documents/types - Create document type (STAFF)
+  [0;31mError:[0m HTTP 409
+[0;32m✓[0m GET /documents/checklist/pdf - Download checklist
+[0;31m✗[0m POST /forms - Create form (STAFF)
+  [0;31mError:[0m HTTP 409
+[0;32m✓[0m GET /forms - List forms (STAFF)
+[0;32m✓[0m POST /notifications/send - Send notification (STAFF)
+[0;32m✓[0m GET /leads - List leads (STAFF)
+[0;32m✓[0m GET /leads/:id - Get lead
+[0;32m✓[0m PATCH /leads/:id - Update lead (STAFF)
+[0;32m✓[0m POST /leads/:id/assign - Assign lead (STAFF)
+[0;31m✗[0m GET /leads/webhook/facebook
+  [0;31mError:[0m HTTP 401
+[0;32m✓[0m POST /ai/recommendations - AI recommendations
+[0;32m✓[0m POST /ai/faq - AI FAQ
+[0;31m✗[0m POST /ai/booking-assistant
+  [0;31mError:[0m HTTP 400
+
+[0;36m╔════════════════════════════════════════╗[0m
+[0;36m║           TEST SUMMARY                 ║[0m
+[0;36m╚════════════════════════════════════════╝[0m
+[0;32m✓ Passed: 72[0m
+[0;31m✗ Failed: 7[0m
+[1;33m⊘ Skipped: 3[0m
+
+[0;34mSuccess Rate: 91.1%[0m
+

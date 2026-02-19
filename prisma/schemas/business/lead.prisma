@@ -1,0 +1,48 @@
+model Lead {
+  id                   String     @id @default(uuid()) @db.Uuid
+  sourceId             String?    @db.Uuid
+  email                String?
+  phone                String?
+  name                 String?
+  message              String?
+  metadata             Json?
+  status               LeadStatus @default(NEW)
+  score                Int        @default(0)
+  convertedBookingId   String?    @db.Uuid
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime   @updatedAt
+  deletedAt           DateTime?
+
+  source      LeadSource?      @relation(fields: [sourceId], references: [id], onDelete: SetNull)
+  assignments LeadAssignment[]
+
+  @@index([sourceId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([deletedAt])
+}
+
+model LeadSource {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  type      String
+  config    Json?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  leads Lead[]
+}
+
+model LeadAssignment {
+  id         String   @id @default(uuid()) @db.Uuid
+  leadId     String   @db.Uuid
+  staffId    String   @db.Uuid
+  assignedAt DateTime @default(now())
+
+  lead  Lead  @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  staff Staff @relation(fields: [staffId], references: [id], onDelete: Cascade)
+
+  @@unique([leadId])
+  @@index([staffId])
+}

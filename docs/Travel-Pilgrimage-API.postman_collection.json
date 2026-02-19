@@ -1,0 +1,1179 @@
+{
+  "info": {
+    "name": "Travel & Pilgrimage API (100 Endpoints)",
+    "description": "Full API collection for Travel & Pilgrimage Management Platform. Set baseUrl (e.g. http://localhost:3000) and accessToken after login.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "apiPrefix", "value": "/api/v1" },
+    { "key": "accessToken", "value": "" },
+    { "key": "refreshToken", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"securePassword123\",\n  \"role\": \"USER\"\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/auth/register"
+          }
+        },
+        {
+          "name": "Login (email)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"securePassword123\"\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/auth/login/email"
+          }
+        },
+        {
+          "name": "Login (phone)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"phone\": \"+919876543210\",\n  \"otp\": \"123456\"\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/auth/login/phone"
+          }
+        },
+        {
+          "name": "Send OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"john@example.com\",\n  \"purpose\": \"login\"\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/auth/send-otp"
+          }
+        },
+        {
+          "name": "Refresh token",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/auth/refresh"
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/auth/logout"
+          }
+        },
+        {
+          "name": "Forgot password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"john@example.com\"\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/auth/forgot-password"
+          }
+        },
+        {
+          "name": "Reset password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"token\": \"RESET_TOKEN\",\n  \"newPassword\": \"newSecurePassword123\"\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/auth/reset-password"
+          }
+        },
+        {
+          "name": "Logout all",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/auth/logout-all"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get my profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/users/me"
+          }
+        },
+        {
+          "name": "Update my profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Updated Name\"\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/users/me"
+          }
+        },
+        {
+          "name": "List all users (ADMIN)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/users/admin/users?page=1&limit=20"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Packages",
+      "item": [
+        {
+          "name": "List packages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}{{apiPrefix}}/packages?page=1&limit=10"
+          }
+        },
+        {
+          "name": "Get package by slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}{{apiPrefix}}/packages/slug/my-package-slug"
+          }
+        },
+        {
+          "name": "Get package by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}{{apiPrefix}}/packages/{{packageId}}"
+          }
+        },
+        {
+          "name": "Create package (ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Himalayan Trek\",\n  \"slug\": \"himalayan-trek\",\n  \"description\": \"5-day trek\",\n  \"summary\": \"Short summary\",\n  \"isActive\": true,\n  \"isFeatured\": false\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/packages"
+          }
+        },
+        {
+          "name": "Update package (ADMIN)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"description\": \"Updated description\"\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/packages/{{packageId}}"
+          }
+        },
+        {
+          "name": "Delete package (ADMIN)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/packages/{{packageId}}"
+          }
+        },
+        {
+          "name": "Add variant (ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Standard\",\n  \"basePrice\": 10000,\n  \"currency\": \"INR\",\n  \"durationDays\": 5,\n  \"maxTravelers\": 4,\n  \"isDefault\": true\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/packages/{{packageId}}/variants"
+          }
+        },
+        {
+          "name": "Add itinerary (ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dayNumber\": 1,\n  \"title\": \"Day 1 - Arrival\",\n  \"description\": \"Arrive at base\",\n  \"activities\": \"Check-in\"\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/packages/{{packageId}}/itineraries"
+          }
+        },
+        {
+          "name": "Add schedule (ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"startDate\": \"2025-06-01\",\n  \"endDate\": \"2025-06-05\",\n  \"availableSeats\": 20\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/packages/{{packageId}}/schedules"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cities",
+      "item": [
+        {
+          "name": "List cities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}{{apiPrefix}}/cities?page=1&limit=20"
+          }
+        },
+        {
+          "name": "Get city by slug",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}{{apiPrefix}}/cities/slug/delhi" }
+        },
+        {
+          "name": "Get city by ID",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}{{apiPrefix}}/cities/{{cityId}}" }
+        },
+        {
+          "name": "Create city (ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Delhi\",\n  \"slug\": \"delhi\",\n  \"country\": \"India\",\n  \"description\": \"Capital\"\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/cities"
+          }
+        },
+        {
+          "name": "Update city (ADMIN)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"description\": \"Updated\"\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/cities/{{cityId}}"
+          }
+        },
+        {
+          "name": "Delete city (ADMIN)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/cities/{{cityId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Staff",
+      "item": [
+        {
+          "name": "Create staff (ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"staff@example.com\",\n  \"password\": \"password123\",\n  \"name\": \"Jane Staff\",\n  \"department\": \"Sales\"\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/staff"
+          }
+        },
+        {
+          "name": "List staff (ADMIN)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/staff?page=1&limit=20"
+          }
+        },
+        {
+          "name": "Get staff by ID (ADMIN)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/staff/{{staffId}}"
+          }
+        },
+        {
+          "name": "Update staff (ADMIN)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"New Name\"\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/staff/{{staffId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Coupons",
+      "item": [
+        {
+          "name": "Create coupon (ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"SAVE10\",\n  \"discountType\": \"PERCENT\",\n  \"discountValue\": 10,\n  \"usageLimit\": 100,\n  \"validFrom\": \"2025-01-01T00:00:00.000Z\",\n  \"validTo\": \"2025-12-31T23:59:59.000Z\"\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/coupons"
+          }
+        },
+        {
+          "name": "List coupons (ADMIN)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/coupons"
+          }
+        },
+        {
+          "name": "Get coupon by ID (ADMIN)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/coupons/{{couponId}}"
+          }
+        },
+        {
+          "name": "Update coupon (ADMIN)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"discountValue\": 15,\n  \"isActive\": true\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/coupons/{{couponId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Banners",
+      "item": [
+        {
+          "name": "List active banners",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}{{apiPrefix}}/banners" }
+        },
+        {
+          "name": "Create banner (ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Summer Sale\",\n  \"imageUrl\": \"https://example.com/banner.jpg\",\n  \"linkUrl\": \"https://example.com/offers\",\n  \"position\": \"home\"\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/banners"
+          }
+        },
+        {
+          "name": "List all banners (ADMIN)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/banners/admin"
+          }
+        },
+        {
+          "name": "Get banner by ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/banners/{{bannerId}}"
+          }
+        },
+        {
+          "name": "Update banner (ADMIN)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"New Title\"\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/banners/{{bannerId}}"
+          }
+        },
+        {
+          "name": "Delete banner (ADMIN)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/banners/{{bannerId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "List reviews",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}{{apiPrefix}}/reviews?page=1&limit=20"
+          }
+        },
+        {
+          "name": "Create review (USER)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"packageId\": \"{{packageId}}\",\n  \"rating\": 5,\n  \"title\": \"Amazing trip\",\n  \"comment\": \"Highly recommend.\"\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/reviews"
+          }
+        },
+        {
+          "name": "Get review by ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/reviews/{{reviewId}}"
+          }
+        },
+        {
+          "name": "Update review (USER)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"rating\": 4,\n  \"comment\": \"Updated\"\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/reviews/{{reviewId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Support",
+      "item": [
+        {
+          "name": "Create ticket (USER)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subject\": \"Booking change\",\n  \"message\": \"I need to change dates.\",\n  \"priority\": \"HIGH\"\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/support"
+          }
+        },
+        {
+          "name": "List my tickets (USER)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/support"
+          }
+        },
+        {
+          "name": "Get ticket (USER)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/support/{{ticketId}}"
+          }
+        },
+        {
+          "name": "Reply to ticket",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"message\": \"We will process your request.\"\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/support/{{ticketId}}/reply"
+          }
+        },
+        {
+          "name": "Close ticket",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/support/{{ticketId}}/close"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        {
+          "name": "Create report (STAFF)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Monthly bookings\",\n  \"type\": \"bookings\",\n  \"params\": {\"month\": \"2025-01\"}\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/reports"
+          }
+        },
+        {
+          "name": "List reports (STAFF)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/reports"
+          }
+        },
+        {
+          "name": "Bookings report (STAFF)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/reports/bookings?startDate=2025-01-01&endDate=2025-01-31"
+          }
+        },
+        {
+          "name": "Revenue report (STAFF)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/reports/revenue?startDate=2025-01-01&endDate=2025-01-31"
+          }
+        },
+        {
+          "name": "Get report by ID (STAFF)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/reports/{{reportId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "Create booking (USER)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"packageId\": \"{{packageId}}\",\n  \"packageScheduleId\": \"{{scheduleId}}\",\n  \"packageVariantId\": \"{{variantId}}\",\n  \"travelers\": [\n    {\"firstName\": \"John\", \"lastName\": \"Doe\", \"email\": \"john@example.com\"}\n  ]\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/bookings"
+          }
+        },
+        {
+          "name": "List my bookings (USER)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/bookings/my"
+          }
+        },
+        {
+          "name": "List all bookings (STAFF)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/bookings/admin"
+          }
+        },
+        {
+          "name": "Get booking",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/bookings/{{bookingId}}"
+          }
+        },
+        {
+          "name": "Update booking step",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"step\": 2\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/bookings/{{bookingId}}/step"
+          }
+        },
+        {
+          "name": "Apply coupon to booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"couponCode\": \"SAVE10\"\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/bookings/{{bookingId}}/apply-coupon"
+          }
+        },
+        {
+          "name": "Confirm booking",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/bookings/{{bookingId}}/confirm"
+          }
+        },
+        {
+          "name": "Cancel booking",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/bookings/{{bookingId}}/cancel"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Create order (USER)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookingId\": \"{{bookingId}}\",\n  \"amount\": 10000,\n  \"currency\": \"INR\"\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/payments/orders"
+          }
+        },
+        {
+          "name": "Get payment by booking",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/payments/booking/{{bookingId}}"
+          }
+        },
+        {
+          "name": "Get payment by ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/payments/{{paymentId}}"
+          }
+        },
+        {
+          "name": "Initiate refund (STAFF)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paymentId\": \"{{paymentId}}\",\n  \"amount\": 5000,\n  \"reason\": \"Customer request\"\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/payments/refunds"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Transport",
+      "item": [
+        {
+          "name": "Add flight (STAFF)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookingId\": \"{{bookingId}}\",\n  \"airline\": \"IndiGo\",\n  \"flightNumber\": \"6E-123\",\n  \"departureCity\": \"DEL\",\n  \"arrivalCity\": \"BOM\",\n  \"departureAt\": \"2025-06-01T10:00:00.000Z\",\n  \"arrivalAt\": \"2025-06-01T12:00:00.000Z\"\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/transport/flight"
+          }
+        },
+        {
+          "name": "Add train (STAFF)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookingId\": \"{{bookingId}}\",\n  \"trainName\": \"Rajdhani\",\n  \"trainNumber\": \"12345\",\n  \"departureCity\": \"NDLS\",\n  \"arrivalCity\": \"MUM\",\n  \"departureAt\": \"2025-06-01T18:00:00.000Z\",\n  \"arrivalAt\": \"2025-06-02T08:00:00.000Z\"\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/transport/train"
+          }
+        },
+        {
+          "name": "Add bus (STAFF)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookingId\": \"{{bookingId}}\",\n  \"busOperator\": \"Volvo\",\n  \"departureCity\": \"Bangalore\",\n  \"arrivalCity\": \"Mysore\",\n  \"departureAt\": \"2025-06-01T09:00:00.000Z\",\n  \"arrivalAt\": \"2025-06-01T12:00:00.000Z\"\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/transport/bus"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Visa",
+      "item": [
+        {
+          "name": "Create visa application (USER)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"country\": \"USA\",\n  \"type\": \"TOURIST\"\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/visa"
+          }
+        },
+        {
+          "name": "List my visa applications (USER)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/visa/my"
+          }
+        },
+        {
+          "name": "Get visa application (USER)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/visa/{{visaId}}"
+          }
+        },
+        {
+          "name": "Update visa application (USER)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"country\": \"UK\",\n  \"type\": \"BUSINESS\"\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/visa/{{visaId}}"
+          }
+        },
+        {
+          "name": "Submit visa application (USER)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/visa/{{visaId}}/submit"
+          }
+        },
+        {
+          "name": "Add document to visa (USER)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"passport\",\n  \"fileUrl\": \"https://storage.example.com/passport.pdf\"\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/visa/{{visaId}}/documents"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Documents",
+      "item": [
+        {
+          "name": "List document types",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}{{apiPrefix}}/documents/types" }
+        },
+        {
+          "name": "List my documents (USER)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/documents/my"
+          }
+        },
+        {
+          "name": "Upload document (USER)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "documentTypeId",
+                  "value": "{{documentTypeId}}",
+                  "type": "text"
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/documents/upload"
+          }
+        },
+        {
+          "name": "Download checklist PDF (USER)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/documents/checklist/pdf"
+          }
+        },
+        {
+          "name": "Get document (USER/STAFF)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/documents/{{documentId}}"
+          }
+        },
+        {
+          "name": "Create document type (STAFF)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Passport\",\n  \"code\": \"PASSPORT\",\n  \"description\": \"Valid passport\",\n  \"isRequired\": true\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/documents/types"
+          }
+        },
+        {
+          "name": "Get document type (STAFF)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/documents/types/{{documentTypeId}}"
+          }
+        },
+        {
+          "name": "Update document status (STAFF)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"APPROVED\"\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/documents/{{documentId}}/status"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Forms",
+      "item": [
+        {
+          "name": "Get form by code (public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}{{apiPrefix}}/forms/code/VISA_APPLICATION"
+          }
+        },
+        {
+          "name": "Submit form (public)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"data\": {\n    \"fullName\": \"John Doe\",\n    \"email\": \"john@example.com\"\n  }\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/forms/{{formId}}/submit"
+          }
+        },
+        {
+          "name": "Create form (STAFF)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Visa Application\",\n  \"code\": \"VISA_APPLICATION\",\n  \"description\": \"Visa form\"\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/forms"
+          }
+        },
+        {
+          "name": "List forms (STAFF)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/forms"
+          }
+        },
+        {
+          "name": "Get form by ID (STAFF)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/forms/{{formId}}"
+          }
+        },
+        {
+          "name": "Add field to form (STAFF)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"email\",\n  \"label\": \"Email\",\n  \"type\": \"email\",\n  \"required\": true,\n  \"sortOrder\": 1\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/forms/{{formId}}/fields"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "List my notifications (USER)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/notifications"
+          }
+        },
+        {
+          "name": "Mark notification as read (USER)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/notifications/mark-read/{{notificationId}}"
+          }
+        },
+        {
+          "name": "Send notification (STAFF)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"title\": \"Booking confirmed\",\n  \"body\": \"Your booking is confirmed.\",\n  \"type\": \"booking\",\n  \"channel\": \"push\"\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/notifications/send"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Leads",
+      "item": [
+        {
+          "name": "Facebook webhook (GET verify)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}{{apiPrefix}}/leads/webhook/facebook?hub.mode=subscribe&hub.verify_token=YOUR_TOKEN&hub.challenge=CHALLENGE"
+          }
+        },
+        {
+          "name": "Create lead (public)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"lead@example.com\",\n  \"phone\": \"+919876543210\",\n  \"name\": \"Lead Name\",\n  \"message\": \"Interested in package\"\n}"
+            },
+            "url": "{{baseUrl}}{{apiPrefix}}/leads"
+          }
+        },
+        {
+          "name": "List leads (STAFF)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/leads"
+          }
+        },
+        {
+          "name": "Get lead (STAFF)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/leads/{{leadId}}"
+          }
+        },
+        {
+          "name": "Update lead (STAFF)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"CONTACTED\",\n  \"score\": 80\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/leads/{{leadId}}"
+          }
+        },
+        {
+          "name": "Assign lead (STAFF)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"staffId\": \"{{staffId}}\"\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/leads/{{leadId}}/assign"
+          }
+        }
+      ]
+    },
+    {
+      "name": "AI",
+      "item": [
+        {
+          "name": "Get recommendations",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"context\": \"family trip\",\n  \"limit\": 5\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/ai/recommendations"
+          }
+        },
+        {
+          "name": "Answer FAQ",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"question\": \"What documents are needed for visa?\",\n  \"context\": \"USA\"\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/ai/faq"
+          }
+        },
+        {
+          "name": "Booking assistant",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"query\": \"Suggest packages under 20k for 5 days\"\n}" },
+            "url": "{{baseUrl}}{{apiPrefix}}/ai/booking-assistant"
+          }
+        }
+      ]
+    }
+  ]
+}

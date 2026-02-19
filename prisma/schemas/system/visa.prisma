@@ -1,0 +1,32 @@
+model VisaApplication {
+  id          String    @id @default(uuid()) @db.Uuid
+  userId      String    @db.Uuid
+  country     String
+  type        String
+  status      String    @default("DRAFT")
+  submittedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documents VisaDocument[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([deletedAt])
+}
+
+model VisaDocument {
+  id                String   @id @default(uuid()) @db.Uuid
+  visaApplicationId  String   @db.Uuid
+  type              String
+  fileUrl           String
+  storagePath       String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  visaApplication VisaApplication @relation(fields: [visaApplicationId], references: [id], onDelete: Cascade)
+
+  @@index([visaApplicationId])
+}

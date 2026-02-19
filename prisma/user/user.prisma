@@ -1,0 +1,64 @@
+// Core User and auth-related models
+
+model User {
+  id             String    @id @default(uuid()) @db.Uuid
+  email          String?   @unique
+  phone          String?   @unique
+  passwordHash   String?
+  role           UserRole  @default(USER)
+  isActive       Boolean   @default(true)
+  emailVerified  Boolean   @default(false)
+  phoneVerified  Boolean   @default(false)
+  lastLoginAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+
+  sessions        Session[]
+  otps            OTP[]
+  admin           Admin?
+  staff           Staff?
+  bookings        Booking[]
+  documents       UserDocument[]
+  visaApps        VisaApplication[]
+  supportTickets  SupportTicket[]
+  reviews         Review[]
+  couponUsages    CouponUsage[]
+  formSubmissions FormSubmission[]
+  notifications   UserNotification[]
+  auditLogs       AuditLog[]
+
+  @@index([email])
+  @@index([phone])
+  @@index([role])
+  @@index([deletedAt])
+}
+
+model OTP {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String?   @db.Uuid
+  email     String?
+  phone     String?
+  otp       String
+  purpose   String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([email, purpose])
+  @@index([phone, purpose])
+  @@index([expiresAt])
+}
+
+model Admin {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @unique @db.Uuid
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
