@@ -76,18 +76,29 @@ class AuthProvider with ChangeNotifier {
 
   Future<String?> register(String name, String email, String password) async {
     try {
+      final requestBody = {
+        'name': name.trim(),
+        'email': email.trim(),
+        'password': password,
+        'role': 'USER',
+      };
+      
       final res = await _client.post<Map<String, dynamic>>(
         '/auth/register',
-        body: {'name': name, 'email': email, 'password': password, 'role': 'USER'},
+        body: requestBody,
         fromJson: (d) => d as Map<String, dynamic>,
       );
       
       if (!res.success) {
-        return res.error ?? 'Registration failed';
+        final errorMsg = res.error ?? 'Registration failed';
+        if (res.statusCode != null) {
+          return 'Error (${res.statusCode}): $errorMsg';
+        }
+        return errorMsg;
       }
       
       if (res.data == null) {
-        return 'Invalid response from server';
+        return 'Invalid response from server: no data received';
       }
       
       try {

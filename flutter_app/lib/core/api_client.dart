@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'config.dart';
 
@@ -56,16 +57,28 @@ class ApiClient {
     T Function(dynamic)? fromJson,
   }) async {
     try {
+      final uri = _uri(path);
+      final bodyJson = body != null ? jsonEncode(body) : null;
+      
+      if (kDebugMode) {
+        print('API POST: $uri');
+        print('Headers: $_headers');
+        print('Body: $bodyJson');
+      }
+      
       final response = await http.post(
-        _uri(path),
+        uri,
         headers: _headers,
-        body: body != null ? jsonEncode(body) : null,
+        body: bodyJson,
       ).timeout(
         const Duration(seconds: 30),
         onTimeout: () => throw Exception('Request timeout'),
       );
       return _handleResponse(response, fromJson);
     } catch (e) {
+      if (kDebugMode) {
+        print('API POST Error: $e');
+      }
       return ApiResponse.error('Network error: ${e.toString()}');
     }
   }
@@ -92,6 +105,11 @@ class ApiClient {
 
   ApiResponse<T> _handleResponse<T>(http.Response response, T Function(dynamic)? fromJson) {
     try {
+      // Debug: Print raw response for troubleshooting
+      if (kDebugMode) {
+        print('API Response [${response.statusCode}]: ${response.body}');
+      }
+      
       final decoded = response.body.isNotEmpty ? jsonDecode(response.body) : null;
       final data = decoded is Map ? decoded['data'] : decoded;
       final success = decoded is Map && (decoded['success'] == true);
@@ -116,6 +134,8 @@ class ApiClient {
               final firstError = errors[0];
               if (firstError is Map && firstError['msg'] != null) {
                 errorMessage = firstError['msg'].toString();
+              } else if (firstError is Map && firstError['message'] != null) {
+                errorMessage = firstError['message'].toString();
               } else {
                 errorMessage = errors.map((e) => e.toString()).join(', ');
               }
@@ -128,10 +148,14 @@ class ApiClient {
       
       return ApiResponse(
         success: false,
-        error: errorMessage ?? response.reasonPhrase ?? 'Request failed',
+        error: errorMessage ?? response.reasonPhrase ?? 'Request failed (${response.statusCode})',
         statusCode: response.statusCode,
       );
     } catch (e) {
+      if (kDebugMode) {
+        print('API Parse Error: $e');
+        print('Response body: ${response.body}');
+      }
       return ApiResponse(
         success: false,
         error: 'Failed to parse response: ${e.toString()}',
