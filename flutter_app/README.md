@@ -11,8 +11,20 @@ Mobile app for the Travel & Pilgrimage API. UI is based on the provided referenc
 
 ## Configuration
 
-- **API base URL**: Default is `http://localhost:3000`. To change it, update `ApiClient` in `lib/core/api_client.dart` (e.g. pass `baseUrl` in the constructor or read from env).
-- **API prefix**: `/api/v1` (matches Postman collection).
+### API Base URL
+
+Update `lib/core/config.dart` to set your backend URL:
+
+```dart
+static const String baseUrl = 'http://localhost:3000'; // Change this
+```
+
+**Important URLs for different setups:**
+- **Android Emulator**: `http://10.0.2.2:3000`
+- **iOS Simulator**: `http://localhost:3000`
+- **Physical Device**: Use your computer's IP (e.g., `http://192.168.1.100:3000`)
+
+The API prefix `/api/v1` is configured automatically.
 
 ## Features
 
@@ -22,12 +34,39 @@ Mobile app for the Travel & Pilgrimage API. UI is based on the provided referenc
 - **Package detail**: Hero image, destination name, location, rating, price per person, image gallery strip, About Destination, Book Now (placeholder for Create booking API).
 - **Bottom nav**: Home, calendar, Search (orange FAB), Messages, Profile.
 
-## API Endpoints Used
+## API Endpoints Integrated
 
-- `POST /auth/register` – Sign up
-- `POST /auth/login/email` – Login
-- `GET /packages?page=1&limit=10&isFeatured=true` – Featured (Best Destination)
+### Authentication
+- `POST /auth/register` – Sign up (with error handling)
+- `POST /auth/login/email` – Login (with error handling)
+
+### Packages
+- `GET /packages?page=1&limit=10&isFeatured=true` – Featured packages (Best Destination)
 - `GET /packages?page=1&limit=20` – All packages
 - `GET /packages/:id` – Package by ID
 
-Other endpoints from the Postman collection (bookings, payments, profile, etc.) can be wired the same way via `ApiClient` and auth token.
+### Services Available (Ready to Use)
+- `BookingService` – Create bookings, get my bookings, confirm/cancel
+- `CityService` – List cities, get city by ID/slug
+- `ReviewService` – List reviews, create review
+- `PaymentService` – Create payment orders, get payment details
+
+All services use the same `ApiClient` with automatic authentication token handling.
+
+## Troubleshooting
+
+### Registration/Login Fails
+1. Check that backend is running on the configured URL
+2. Verify backend URL in `lib/core/config.dart` matches your setup
+3. Check error message in the SnackBar - it shows the actual API error
+4. Ensure backend database has the `name` field in User model (run migrations)
+
+### Network Errors
+- **Android Emulator**: Use `http://10.0.2.2:3000` instead of `localhost`
+- **Physical Device**: Use your computer's local IP address
+- Check that backend CORS allows your Flutter app origin
+
+### API Connection Issues
+- Verify backend is running: `curl http://localhost:3000/health`
+- Check API base URL in `lib/core/config.dart`
+- Ensure backend has proper CORS configuration

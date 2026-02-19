@@ -45,7 +45,7 @@ function getExpiresInSeconds(expiry: string): number {
 }
 
 function buildAuthResponse(user: NonNullable<Awaited<ReturnType<typeof authRepository.findUserById>>>, accessToken: string, refreshToken: string): AuthResponseDto {
-  const name = user.admin?.name ?? user.staff?.name ?? null;
+  const name = user.name ?? user.admin?.name ?? user.staff?.name ?? null;
   return {
     user: {
       id: user.id,

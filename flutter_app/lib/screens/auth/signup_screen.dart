@@ -31,18 +31,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
     final auth = context.read<AuthProvider>();
-    final ok = await auth.register(
+    final error = await auth.register(
       _nameController.text.trim(),
       _emailController.text.trim(),
       _passwordController.text,
     );
     setState(() => _isLoading = false);
     if (mounted) {
-      if (ok) {
+      if (error == null) {
         context.go('/');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Registration failed. Try again.')),
+          SnackBar(
+            content: Text(error),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+          ),
         );
       }
     }

@@ -29,14 +29,18 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
     final auth = context.read<AuthProvider>();
-    final ok = await auth.login(_emailController.text.trim(), _passwordController.text);
+    final error = await auth.login(_emailController.text.trim(), _passwordController.text);
     setState(() => _isLoading = false);
     if (mounted) {
-      if (ok) {
+      if (error == null) {
         context.go('/');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Invalid email or password')),
+          SnackBar(
+            content: Text(error),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+          ),
         );
       }
     }

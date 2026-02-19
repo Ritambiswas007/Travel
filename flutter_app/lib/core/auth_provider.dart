@@ -43,34 +43,66 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> login(String email, String password) async {
-    final res = await _client.post<Map<String, dynamic>>(
-      '/auth/login/email',
-      body: {'email': email, 'password': password},
-      fromJson: (d) => d as Map<String, dynamic>,
-    );
-    if (!res.success || res.data == null) return false;
-    final auth = AuthResponse.fromJson(res.data!);
-    await _persistAuth(auth);
-    _user = auth.user;
-    _client.setAccessToken(auth.accessToken);
-    notifyListeners();
-    return true;
+  Future<String?> login(String email, String password) async {
+    try {
+      final res = await _client.post<Map<String, dynamic>>(
+        '/auth/login/email',
+        body: {'email': email, 'password': password},
+        fromJson: (d) => d as Map<String, dynamic>,
+      );
+      
+      if (!res.success) {
+        return res.error ?? 'Login failed';
+      }
+      
+      if (res.data == null) {
+        return 'Invalid response from server';
+      }
+      
+      try {
+        final auth = AuthResponse.fromJson(res.data!);
+        await _persistAuth(auth);
+        _user = auth.user;
+        _client.setAccessToken(auth.accessToken);
+        notifyListeners();
+        return null; // Success
+      } catch (e) {
+        return 'Failed to parse auth response: ${e.toString()}';
+      }
+    } catch (e) {
+      return 'Network error: ${e.toString()}';
+    }
   }
 
-  Future<bool> register(String name, String email, String password) async {
-    final res = await _client.post<Map<String, dynamic>>(
-      '/auth/register',
-      body: {'name': name, 'email': email, 'password': password, 'role': 'USER'},
-      fromJson: (d) => d as Map<String, dynamic>,
-    );
-    if (!res.success || res.data == null) return false;
-    final auth = AuthResponse.fromJson(res.data!);
-    await _persistAuth(auth);
-    _user = auth.user;
-    _client.setAccessToken(auth.accessToken);
-    notifyListeners();
-    return true;
+  Future<String?> register(String name, String email, String password) async {
+    try {
+      final res = await _client.post<Map<String, dynamic>>(
+        '/auth/register',
+        body: {'name': name, 'email': email, 'password': password, 'role': 'USER'},
+        fromJson: (d) => d as Map<String, dynamic>,
+      );
+      
+      if (!res.success) {
+        return res.error ?? 'Registration failed';
+      }
+      
+      if (res.data == null) {
+        return 'Invalid response from server';
+      }
+      
+      try {
+        final auth = AuthResponse.fromJson(res.data!);
+        await _persistAuth(auth);
+        _user = auth.user;
+        _client.setAccessToken(auth.accessToken);
+        notifyListeners();
+        return null; // Success
+      } catch (e) {
+        return 'Failed to parse auth response: ${e.toString()}';
+      }
+    } catch (e) {
+      return 'Network error: ${e.toString()}';
+    }
   }
 
   Future<void> _persistAuth(AuthResponse auth) async {

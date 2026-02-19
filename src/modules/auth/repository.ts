@@ -36,6 +36,7 @@ export const authRepository = {
         phone: data.phone,
         passwordHash: data.passwordHash,
         role: data.role,
+        name: data.name,
       },
     });
     if (data.role === 'ADMIN' && data.name) {

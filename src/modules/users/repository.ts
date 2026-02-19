@@ -9,6 +9,7 @@ export const usersRepository = {
         id: true,
         email: true,
         phone: true,
+        name: true,
         role: true,
         isActive: true,
         emailVerified: true,
@@ -28,19 +29,13 @@ export const usersRepository = {
       include: { admin: true, staff: true },
     });
     if (!user) return null;
-    if (data.email !== undefined) {
-      await prisma.user.update({
-        where: { id: userId },
-        data: { email: data.email },
-      });
-    }
-    if (data.phone !== undefined) {
-      await prisma.user.update({
-        where: { id: userId },
-        data: { phone: data.phone },
-      });
-    }
+    
+    const updateData: { email?: string; phone?: string; name?: string } = {};
+    if (data.email !== undefined) updateData.email = data.email;
+    if (data.phone !== undefined) updateData.phone = data.phone;
     if (data.name !== undefined) {
+      updateData.name = data.name;
+      // Also update admin/staff name if they exist
       if (user.admin) {
         await prisma.admin.update({
           where: { userId },
@@ -54,6 +49,14 @@ export const usersRepository = {
         });
       }
     }
+    
+    if (Object.keys(updateData).length > 0) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: updateData,
+      });
+    }
+    
     return usersRepository.findById(userId);
   },
 
@@ -78,6 +81,7 @@ export const usersRepository = {
           id: true,
           email: true,
           phone: true,
+          name: true,
           role: true,
           isActive: true,
           createdAt: true,

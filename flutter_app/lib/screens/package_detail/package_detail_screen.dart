@@ -173,10 +173,19 @@ class _PackageDetailScreenState extends State<PackageDetailScreen> {
                         width: double.infinity,
                         height: 56,
                         child: ElevatedButton(
-                          onPressed: () {
-                            // TODO: Navigate to booking flow using Create booking API
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Book Now — use Create booking (USER) API')));
-                          },
+                        onPressed: () async {
+                          if (_package == null) return;
+                          // Navigate to booking screen with package details
+                          // For now, show a message - can be extended to full booking flow
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Booking flow: Package ${_package!.name} - Use Create booking API'),
+                                duration: const Duration(seconds: 3),
+                              ),
+                            );
+                          }
+                        },
                           child: const Text('Book Now'),
                         ),
                       ),
