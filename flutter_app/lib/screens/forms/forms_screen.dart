@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:travel_pilgrimage_app/core/theme.dart';
 import 'package:travel_pilgrimage_app/core/auth_provider.dart';
 import 'package:travel_pilgrimage_app/core/services/form_service.dart';
+import 'form_detail_screen.dart';
 
 class FormsScreen extends StatefulWidget {
   const FormsScreen({super.key});
@@ -53,12 +54,7 @@ class _FormsScreenState extends State<FormsScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: () {
-              // TODO: Show create form dialog
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Create form feature coming soon')),
-              );
-            },
+            onPressed: _showCreateFormDialog,
           ),
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -94,14 +90,97 @@ class _FormsScreenState extends State<FormsScreen> {
                             ],
                           ),
                           trailing: const Icon(Icons.chevron_right),
-                          onTap: () {
-                            // TODO: Navigate to form details
-                          },
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => FormDetailScreen(formId: form['id'] as String),
+                            ),
+                          ),
                         ),
                       );
                     },
                   ),
                 ),
     );
+  }
+
+  Future<void> _showCreateFormDialog() async {
+    final nameController = TextEditingController();
+    final codeController = TextEditingController();
+    final descriptionController = TextEditingController();
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Create form'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(labelText: 'Name'),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: codeController,
+                  decoration: const InputDecoration(labelText: 'Code'),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: descriptionController,
+                  decoration: const InputDecoration(labelText: 'Description'),
+                  maxLines: 2,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Create'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (result != true) return;
+
+    final name = nameController.text.trim();
+    final code = codeController.text.trim();
+    final description = descriptionController.text.trim().isEmpty ? null : descriptionController.text.trim();
+
+    if (name.isEmpty || code.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Name and code are required'), backgroundColor: Colors.red),
+      );
+      return;
+    }
+
+    try {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final client = authProvider.apiClient;
+      final service = FormService(client);
+      final created = await service.createForm(name: name, code: code, description: description);
+      if (created != null) {
+        _loadForms();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Form created')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to create form'), backgroundColor: Colors.red),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to create form: ${e.toString()}'), backgroundColor: Colors.red),
+      );
+    }
   }
 }

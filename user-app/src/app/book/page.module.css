@@ -1,0 +1,53 @@
+.main {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+
+.card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 32px;
+  text-align: center;
+}
+
+.card h1 {
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+
+.card p {
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+}
+
+.primaryBtn {
+  display: inline-block;
+  padding: 14px 28px;
+  background: var(--brand);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 8px;
+  margin-right: 12px;
+  margin-bottom: 8px;
+}
+
+.primaryBtn:hover {
+  background: var(--brand-hover);
+  color: #fff;
+  text-decoration: none;
+}
+
+.secondaryBtn {
+  display: inline-block;
+  padding: 14px 28px;
+  border: 1px solid var(--text);
+  color: var(--text);
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+.secondaryBtn:hover {
+  text-decoration: none;
+  background: var(--bg-secondary);
+}

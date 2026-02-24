@@ -57,11 +57,11 @@ class _HomeScreenState extends State<HomeScreen> {
       final reportService = ReportService(client);
       final today = DateTime.now();
       final startDate = '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
-      final revenue = await reportService.getRevenueReport(startDate: startDate, endDate: startDate);
-      if (revenue != null && revenue['totalRevenue'] != null) {
+      final revenue = await reportService.getRevenueReport(from: startDate, to: startDate);
+      if (revenue != null && revenue['total'] != null) {
         if (mounted) {
           setState(() {
-            _todayRevenue = (revenue['totalRevenue'] as num).toDouble();
+            _todayRevenue = (revenue['total'] as num).toDouble();
           });
         }
       }

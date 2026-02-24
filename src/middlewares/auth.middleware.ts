@@ -59,7 +59,11 @@ export async function authMiddleware(
       role: user.role,
     };
     next();
-  } catch {
+  } catch (err) {
+    if (err instanceof jwt.TokenExpiredError) {
+      res.status(401).json({ success: false, message: 'Token expired' });
+      return;
+    }
     res.status(401).json({ success: false, message: 'Invalid or expired token' });
   }
 }

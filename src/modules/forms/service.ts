@@ -19,15 +19,16 @@ export const formsService = {
   async getFormById(id: string) {
     const form = await formsRepository.findFormById(id);
     if (!form) {
-      throw Object.assign(new Error('Form not found'), { statusCode: 404 });
+      throw Object.assign(new Error('Form not found'), { statusCode: 404, isOperational: true });
     }
     return form;
   },
 
   async getFormByCode(code: string) {
-    const form = await formsRepository.findFormByCode(code);
+    const normalized = code.toUpperCase().trim();
+    const form = await formsRepository.findFormByCode(normalized);
     if (!form) {
-      throw Object.assign(new Error('Form not found'), { statusCode: 404 });
+      throw Object.assign(new Error('Form not found'), { statusCode: 404, isOperational: true });
     }
     return form;
   },
@@ -39,7 +40,7 @@ export const formsService = {
   async addField(formId: string, dto: CreateFieldDto) {
     const form = await formsRepository.findFormById(formId);
     if (!form) {
-      throw Object.assign(new Error('Form not found'), { statusCode: 404 });
+      throw Object.assign(new Error('Form not found'), { statusCode: 404, isOperational: true });
     }
     return formsRepository.addField(formId, {
       name: dto.name,
@@ -54,7 +55,7 @@ export const formsService = {
   async submit(formId: string, userId: string | null, dto: SubmitFormDto) {
     const form = await formsRepository.findFormById(formId);
     if (!form || !form.isActive) {
-      throw Object.assign(new Error('Form not found or inactive'), { statusCode: 404 });
+      throw Object.assign(new Error('Form not found or inactive'), { statusCode: 404, isOperational: true });
     }
     return formsRepository.createSubmission(formId, userId, dto.data as Prisma.InputJsonValue);
   },

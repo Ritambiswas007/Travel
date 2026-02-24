@@ -69,12 +69,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.send),
-            onPressed: () {
-              // TODO: Show send notification dialog
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Send notification feature coming soon')),
-              );
-            },
+            onPressed: _showSendNotificationDialog,
           ),
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -149,6 +144,108 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       return '${d.day}/${d.month}/${d.year} ${d.hour}:${d.minute.toString().padLeft(2, '0')}';
     } catch (_) {
       return date.toString();
+    }
+  }
+
+  Future<void> _showSendNotificationDialog() async {
+    final userIdController = TextEditingController();
+    final titleController = TextEditingController();
+    final bodyController = TextEditingController();
+    final typeController = TextEditingController(text: 'booking');
+    final channelController = TextEditingController(text: 'push');
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Send notification'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: userIdController,
+                  decoration: const InputDecoration(
+                    labelText: 'User ID (optional)',
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: titleController,
+                  decoration: const InputDecoration(labelText: 'Title'),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: bodyController,
+                  decoration: const InputDecoration(labelText: 'Body'),
+                  maxLines: 2,
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: typeController,
+                  decoration: const InputDecoration(labelText: 'Type (e.g. booking, system)'),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: channelController,
+                  decoration: const InputDecoration(labelText: 'Channel (e.g. push, email)'),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Send'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (result != true) return;
+
+    final title = titleController.text.trim();
+    final body = bodyController.text.trim();
+    final type = typeController.text.trim();
+    final channel = channelController.text.trim();
+    final userId = userIdController.text.trim().isEmpty ? null : userIdController.text.trim();
+
+    if (title.isEmpty || body.isEmpty || type.isEmpty || channel.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Title, body, type and channel are required'), backgroundColor: Colors.red),
+      );
+      return;
+    }
+
+    try {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final client = authProvider.apiClient;
+      final service = NotificationService(client);
+      final sent = await service.sendNotification(
+        userId: userId,
+        title: title,
+        body: body,
+        type: type,
+        channel: channel,
+      );
+      if (sent != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Notification sent')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to send notification'), backgroundColor: Colors.red),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to send notification: ${e.toString()}'), backgroundColor: Colors.red),
+      );
     }
   }
 }

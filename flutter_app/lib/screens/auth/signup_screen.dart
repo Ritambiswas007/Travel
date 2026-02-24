@@ -28,16 +28,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Future<void> _submit() async {
-    // Staff registration is disabled - accounts are created by administrators
-    if (mounted) {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _isLoading = true);
+    final auth = context.read<AuthProvider>();
+    final error = await auth.registerStaff(
+      name: _nameController.text.trim(),
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+    );
+    setState(() => _isLoading = false);
+
+    if (!mounted) return;
+
+    if (error == null) {
+      context.go('/');
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Staff accounts are created by administrators. Please contact your admin for access.',
-            style: TextStyle(fontWeight: FontWeight.bold),
+        SnackBar(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Sign up failed',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 4),
+              Text(error, style: const TextStyle(fontSize: 12)),
+            ],
           ),
-          backgroundColor: Colors.orange,
-          duration: Duration(seconds: 5),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 6),
         ),
       );
     }
@@ -71,16 +92,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(height: 24),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 22),
-                      onPressed: () => context.pop(),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
                   const Text(
-                    'Sign up now',
+                    'Create staff account',
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -89,7 +102,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'Please fill the details and create account',
+                    'This creates a staff login for the Travel & Pilgrimage platform.',
                     style: TextStyle(fontSize: 15, color: Color(0xFF9CA3AF)),
                   ),
                   const SizedBox(height: 40),

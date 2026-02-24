@@ -1,0 +1,104 @@
+.card {
+  display: block;
+  color: inherit;
+  transition: transform var(--transition-normal);
+}
+
+.card:hover {
+  text-decoration: none;
+  color: inherit;
+  transform: translateY(-2px);
+}
+
+.imageWrap {
+  position: relative;
+  aspect-ratio: 4/3;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg-secondary);
+  transition: box-shadow var(--transition-normal);
+}
+
+.card:hover .imageWrap {
+  box-shadow: var(--shadow-md);
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.card:hover .image {
+  transform: scale(1.03);
+}
+
+.imagePlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.guestFav {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--brand);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.heart {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text);
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.heart:hover {
+  background: #fff;
+  transform: scale(1.08);
+}
+
+.body {
+  padding: 10px 0 4px;
+}
+
+.location {
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+
+.price {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.amount {
+  font-weight: 700;
+}
+
+.unit {
+  font-weight: 400;
+  color: var(--text);
+}

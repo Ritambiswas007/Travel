@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:travel_pilgrimage_app/core/theme.dart';
 import 'package:travel_pilgrimage_app/core/auth_provider.dart';
 import 'package:travel_pilgrimage_app/core/services/document_service.dart';
+import 'document_type_detail_screen.dart';
 
 class DocumentsScreen extends StatefulWidget {
   const DocumentsScreen({super.key});
@@ -53,12 +54,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: () {
-              // TODO: Show create document type dialog
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Create document type feature coming soon')),
-              );
-            },
+            onPressed: _showCreateDialog,
           ),
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -103,14 +99,133 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                             ],
                           ),
                           trailing: const Icon(Icons.chevron_right),
-                          onTap: () {
-                            // TODO: Navigate to document type details
-                          },
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => DocumentTypeDetailScreen(typeId: type['id'] as String),
+                            ),
+                          ),
                         ),
                       );
                     },
                   ),
                 ),
     );
+  }
+
+  Future<void> _showCreateDialog() async {
+    final nameController = TextEditingController();
+    final codeController = TextEditingController();
+    final descriptionController = TextEditingController();
+    bool isRequired = false;
+    int? expiresInDays;
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Create document type'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(labelText: 'Name'),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: codeController,
+                  decoration: const InputDecoration(labelText: 'Code'),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: descriptionController,
+                  decoration: const InputDecoration(labelText: 'Description'),
+                  maxLines: 2,
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    StatefulBuilder(
+                      builder: (context, setInnerState) {
+                        return Checkbox(
+                          value: isRequired,
+                          onChanged: (v) {
+                            setInnerState(() {
+                              isRequired = v ?? false;
+                            });
+                          },
+                        );
+                      },
+                    ),
+                    const Text('Required'),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                TextField(
+                  decoration: const InputDecoration(
+                    labelText: 'Expires in days (optional)',
+                  ),
+                  keyboardType: TextInputType.number,
+                  onChanged: (v) {
+                    expiresInDays = int.tryParse(v.trim());
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Create'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (result != true) return;
+
+    final name = nameController.text.trim();
+    final code = codeController.text.trim();
+    final description = descriptionController.text.trim().isEmpty ? null : descriptionController.text.trim();
+
+    if (name.isEmpty || code.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Name and code are required'), backgroundColor: Colors.red),
+      );
+      return;
+    }
+
+    try {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final client = authProvider.apiClient;
+      final service = DocumentService(client);
+      final created = await service.createDocumentType(
+        name: name,
+        code: code,
+        description: description,
+        isRequired: isRequired,
+        expiresInDays: expiresInDays,
+      );
+      if (created != null) {
+        _loadDocumentTypes();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Document type created')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to create document type'), backgroundColor: Colors.red),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to create document type: ${e.toString()}'), backgroundColor: Colors.red),
+      );
+    }
   }
 }

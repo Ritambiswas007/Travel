@@ -40,13 +40,24 @@ class AuthProvider with ChangeNotifier {
           _client.setAccessToken(accessToken);
           _user = UserModel(id: userId, name: name, email: email, role: role ?? 'STAFF');
 
-          // Validate token on app startup to avoid repeated 401 calls.
+          // Validate token on app startup; if invalid, try refresh once.
           final me = await _client.get<Map<String, dynamic>>(
             '/users/me',
             fromJson: (d) => d as Map<String, dynamic>,
           );
           if (!me.success) {
-            await _clearStoredAuth(notify: false);
+            final refreshed = await _tryRefreshToken();
+            if (refreshed) {
+              final me2 = await _client.get<Map<String, dynamic>>(
+                '/users/me',
+                fromJson: (d) => d as Map<String, dynamic>,
+              );
+              if (!me2.success) {
+                await _clearStoredAuth(notify: false);
+              }
+            } else {
+              await _clearStoredAuth(notify: false);
+            }
           }
         } else {
           await _clearStoredAuth(notify: false);
@@ -94,6 +105,138 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  /// Register a new STAFF account and log in.
+  Future<String?> registerStaff({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final res = await _client.post<Map<String, dynamic>>(
+        '/auth/register',
+        body: {
+          'name': name,
+          'email': email,
+          'password': password,
+          'role': 'STAFF',
+        },
+        fromJson: (d) => d as Map<String, dynamic>,
+      );
+
+      if (!res.success) {
+        return res.error ?? 'Registration failed';
+      }
+
+      // After successful registration, perform a normal login
+      return await login(email, password);
+    } catch (e) {
+      return 'Network error: ${e.toString()}';
+    }
+  }
+
+  /// Login with phone + OTP.
+  Future<String?> loginWithPhone(String phone, String otp) async {
+    try {
+      final res = await _client.post<Map<String, dynamic>>(
+        '/auth/login/phone',
+        body: {'phone': phone, 'otp': otp},
+        fromJson: (d) => d as Map<String, dynamic>,
+      );
+
+      if (!res.success) {
+        return res.error ?? 'Login failed';
+      }
+      if (res.data == null) {
+        return 'Invalid response from server';
+      }
+
+      try {
+        final auth = AuthResponse.fromJson(res.data!);
+        if (auth.user.role != 'STAFF' && auth.user.role != 'ADMIN') {
+          return 'Access denied. This app is for staff members only.';
+        }
+        await _persistAuth(auth);
+        _user = auth.user;
+        _client.setAccessToken(auth.accessToken);
+        notifyListeners();
+        return null;
+      } catch (e) {
+        return 'Failed to parse auth response: ${e.toString()}';
+      }
+    } catch (e) {
+      return 'Network error: ${e.toString()}';
+    }
+  }
+
+  /// Send OTP to email for login or other purposes.
+  Future<String?> sendOtp(String email, {String purpose = 'login'}) async {
+    try {
+      final res = await _client.post<Map<String, dynamic>>(
+        '/auth/send-otp',
+        body: {'email': email, 'purpose': purpose},
+        fromJson: (d) => d as Map<String, dynamic>,
+      );
+      if (!res.success) {
+        return res.error ?? 'Failed to send OTP';
+      }
+      return null;
+    } catch (e) {
+      return 'Network error: ${e.toString()}';
+    }
+  }
+
+  Future<String?> forgotPassword(String email) async {
+    try {
+      final res = await _client.post<Map<String, dynamic>>(
+        '/auth/forgot-password',
+        body: {'email': email},
+        fromJson: (d) => d as Map<String, dynamic>,
+      );
+      if (!res.success) {
+        return res.error ?? 'Failed to request reset';
+      }
+      return null;
+    } catch (e) {
+      return 'Network error: ${e.toString()}';
+    }
+  }
+
+  Future<String?> resetPassword(String token, String newPassword) async {
+    try {
+      final res = await _client.post<Map<String, dynamic>>(
+        '/auth/reset-password',
+        body: {'token': token, 'newPassword': newPassword},
+        fromJson: (d) => d as Map<String, dynamic>,
+      );
+      if (!res.success) {
+        return res.error ?? 'Failed to reset password';
+      }
+      return null;
+    } catch (e) {
+      return 'Network error: ${e.toString()}';
+    }
+  }
+
+  Future<bool> _tryRefreshToken() async {
+    try {
+      final refreshToken = await _storage.read(key: _keyRefreshToken);
+      if (refreshToken == null || refreshToken.isEmpty) return false;
+      final res = await _client.post<Map<String, dynamic>>(
+        '/auth/refresh',
+        body: {'refreshToken': refreshToken},
+        fromJson: (d) => d as Map<String, dynamic>,
+      );
+      if (!res.success || res.data == null) return false;
+      final next = res.data!['accessToken'] as String?;
+      if (next == null || next.isEmpty) return false;
+      await _storage.write(key: _keyAccessToken, value: next);
+      _client.setAccessToken(next);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   Future<void> _persistAuth(AuthResponse auth) async {
     await _storage.write(key: _keyAccessToken, value: auth.accessToken);
     await _storage.write(key: _keyRefreshToken, value: auth.refreshToken);
@@ -104,7 +247,36 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> logout() async {
+    try {
+      final refreshToken = await _storage.read(key: _keyRefreshToken);
+      if (refreshToken != null && refreshToken.isNotEmpty) {
+        await _client.post<Map<String, dynamic>>(
+          '/auth/logout',
+          body: {'refreshToken': refreshToken},
+          fromJson: (d) => d as Map<String, dynamic>,
+        );
+      }
+    } catch (_) {
+      // ignore backend logout errors, still clear local state
+    }
     await _clearStoredAuth(notify: true);
+  }
+
+  Future<String?> logoutAll() async {
+    try {
+      final res = await _client.post<Map<String, dynamic>>(
+        '/auth/logout-all',
+        fromJson: (d) => d as Map<String, dynamic>,
+      );
+      await _clearStoredAuth(notify: true);
+      if (!res.success) {
+        return res.error ?? 'Failed to logout from all devices';
+      }
+      return null;
+    } catch (e) {
+      await _clearStoredAuth(notify: true);
+      return 'Network error: ${e.toString()}';
+    }
   }
 
   Future<void> _clearStoredAuth({required bool notify}) async {

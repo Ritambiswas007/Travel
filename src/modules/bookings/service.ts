@@ -76,7 +76,7 @@ export const bookingsService = {
       throw Object.assign(new Error('Booking not found'), { statusCode: 404 });
     }
     if (userId && booking.userId !== userId) {
-      throw Object.assign(new Error('Forbidden'), { statusCode: 403 });
+      throw Object.assign(new Error('Forbidden'), { statusCode: 403, isOperational: true });
     }
     return booking;
   },

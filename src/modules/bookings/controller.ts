@@ -59,7 +59,13 @@ export async function getBooking(
       res.status(400).json({ success: false, errors: errs.array() });
       return;
     }
-    const userId = req.user?.id;
+    // For regular users, restrict to their own booking.
+    // Staff/Admin can view any booking.
+    const role = req.user?.role;
+    const userId =
+      role === 'STAFF' || role === 'ADMIN'
+        ? undefined
+        : req.user?.id;
     const booking = await bookingsService.getById(req.params.id, userId);
     res.json({ success: true, data: booking });
   } catch (e) {

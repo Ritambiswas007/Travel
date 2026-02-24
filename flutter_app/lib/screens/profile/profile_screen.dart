@@ -102,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final authProvider = context.watch<AuthProvider>();
     final user = authProvider.user;
     final userName = user?.name ?? 'Staff';
-    final userEmail = user?.email ?? '';
+    // final userEmail = user?.email ?? '';
     final userRole = user?.role ?? 'STAFF';
 
     return Scaffold(
@@ -242,9 +242,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ListTile(
                       leading: const Icon(Icons.logout, color: Colors.red),
                       title: const Text('Logout', style: TextStyle(color: Colors.red)),
-                      onTap: () {
-                        authProvider.logout();
-                        context.go('/login');
+                      onTap: () async {
+                        await authProvider.logout();
+                        if (mounted) context.go('/login');
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.logout, color: Colors.redAccent),
+                      title: const Text('Logout from all devices'),
+                      subtitle: const Text(
+                        'Invalidate this account on all devices',
+                        style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                      ),
+                      onTap: () async {
+                        final result = await authProvider.logoutAll();
+                        if (mounted) {
+                          context.go('/login');
+                          if (result != null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(result), backgroundColor: Colors.red),
+                            );
+                          }
+                        }
                       },
                     ),
                   ],

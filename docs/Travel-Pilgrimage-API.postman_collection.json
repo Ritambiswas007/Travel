@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Travel & Pilgrimage API (100 Endpoints)",
-    "description": "Full API collection for Travel & Pilgrimage Management Platform. Set baseUrl (e.g. http://localhost:3000) and accessToken after login.",
+    "description": "Full API collection for Travel & Pilgrimage Management Platform.\n\n1. Set baseUrl (e.g. http://localhost:3000 for backend).\n2. For USER/STAFF/ADMIN endpoints: run 'Login (email)' or 'Login (phone)', then copy the response body's data.accessToken into the collection variable 'accessToken' (and data.refreshToken into 'refreshToken').\n3. If you get 401 'Invalid or expired token' or 'Token expired': run Login again and update accessToken; tokens expire after 15 minutes by default.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [

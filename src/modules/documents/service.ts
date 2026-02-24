@@ -38,14 +38,30 @@ export const documentsService = {
     if (!docType) {
       throw Object.assign(new Error('Document type not found'), { statusCode: 404 });
     }
-    
-    // Upload file to storage
-    const fileUrl = await uploadDocument(
-      userId,
-      dto.file.buffer,
-      dto.file.mimetype,
-      dto.file.originalname
-    );
+    let fileUrl: string;
+    try {
+      // Upload file to storage (Supabase or configured storage backend)
+      fileUrl = await uploadDocument(
+        userId,
+        dto.file.buffer,
+        dto.file.mimetype,
+        dto.file.originalname
+      );
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'File upload failed';
+      // Surface a clear operational error when storage is not configured,
+      // instead of a generic 500 Internal Server Error.
+      if (message.includes('Supabase storage not configured')) {
+        throw Object.assign(
+          new Error('Document storage is not configured. Please set SUPABASE_* env vars or disable Supabase storage.'),
+          { statusCode: 503, isOperational: true }
+        );
+      }
+      throw Object.assign(new Error('File upload failed'), {
+        statusCode: 502,
+        isOperational: true,
+      });
+    }
     
     const expiresInDays = docType.expiresInDays ?? undefined;
     const expiryDate = expiresInDays

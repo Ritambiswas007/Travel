@@ -1,0 +1,60 @@
+.wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.scroll {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.item {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color var(--transition-fast), background var(--transition-fast), color var(--transition-fast);
+}
+
+.item:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+.item.active {
+  border-color: var(--brand);
+  background: var(--brand-muted);
+  color: var(--brand);
+}
+
+.filtersBtn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: var(--bg);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.filtersBtn:hover {
+  border-color: var(--brand);
+  background: var(--brand-muted);
+}

@@ -1,0 +1,4 @@
+/* Footer component no longer renders content; styles kept for any cached references. */
+.footer {
+  display: none;
+}

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const Color primary = Color(0xFFFF6B35);
-  static const Color primaryDark = Color(0xFFE55A2B);
-  static const Color accent = Color(0xFFFF8C42);
-  static const Color backgroundLight = Color(0xFFF8F9FA);
-  static const Color backgroundDark = Color(0xFF0D0D0D);
+  static const Color primary = Color(0xFF0D9488); // teal
+  static const Color primaryDark = Color(0xFF0F766E);
+  static const Color accent = Color(0xFFF59E0B);
+  static const Color backgroundLight = Color(0xFFF8FAFC);
+  static const Color backgroundDark = Color(0xFF020617);
   static const Color cardLight = Colors.white;
-  static const Color textPrimary = Color(0xFF1A1A1A);
-  static const Color textSecondary = Color(0xFF6B7280);
+  static const Color textPrimary = Color(0xFF1E293B);
+  static const Color textSecondary = Color(0xFF64748B);
   static const Color textOnPrimary = Colors.white;
-  static const Color starRating = Color(0xFFFFC107);
-  static const Color divider = Color(0xFFE5E7EB);
+  static const Color starRating = Color(0xFFFACC15);
+  static const Color divider = Color(0xFFE2E8F0);
 }
 
 class AppTheme {
@@ -40,17 +40,28 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.textOnPrimary,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          elevation: 0,
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(999))),
+          elevation: 1,
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: const Color(0xFF2A2A2A),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.divider),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.divider),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.primary),
+        ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        hintStyle: const TextStyle(color: Color(0xFF9CA3AF)),
+        hintStyle: const TextStyle(color: Color(0xFF94A3B8)),
       ),
     );
   }
