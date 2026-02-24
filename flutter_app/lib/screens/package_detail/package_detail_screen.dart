@@ -27,7 +27,9 @@ class _PackageDetailScreenState extends State<PackageDetailScreen> {
   }
 
   Future<void> _load() async {
-    final client = context.read<AuthProvider>().apiClient;
+    if (!mounted) return;
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final client = authProvider.apiClient;
     final service = PackageService(client);
     final p = await service.getPackageById(widget.packageId);
     if (mounted) setState(() { _package = p; _loading = false; });
@@ -237,7 +239,7 @@ class _GalleryThumbMore extends StatelessWidget {
       width: 72,
       height: 72,
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.6),
+        color: Colors.black.withOpacity(0.6),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Center(child: Text('+$count', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16))),

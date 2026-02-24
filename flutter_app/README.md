@@ -1,72 +1,172 @@
-# Travel & Pilgrimage – Flutter App
+# Staff Portal - Flutter App
 
-Mobile app for the Travel & Pilgrimage API. UI is based on the provided reference screens: Home (Discover / Best Destination), All Popular Trip Packages list, Package Details (hero + Book Now), and Sign up (dark theme).
+**This is a staff-only application** for managing bookings, leads, reports, and customer support for the Travel & Pilgrimage platform.
 
-## Setup
+## 🎯 Purpose
 
-1. Install Flutter SDK (3.2+).
-2. From `flutter_app/` run:
-   - `flutter pub get`
-   - `flutter run` (with device/emulator)
+This Flutter app is designed exclusively for **staff members** to:
+- Manage all bookings (view, update status, confirm, cancel)
+- Track and assign leads
+- Generate and view reports (bookings, revenue)
+- Handle support tickets
+- View dashboard metrics
 
-## Configuration
+## ⚠️ Important: Staff-Only Access
 
-### API Base URL
+- **Only STAFF and ADMIN roles can log in**
+- User registration is disabled (staff accounts are created by administrators)
+- Regular users (USER role) cannot access this app
+- If a non-staff user attempts to login, they will receive an "Access denied" message
 
-Update `lib/core/config.dart` to set your backend URL:
+## 🚀 Getting Started
 
-```dart
-static const String baseUrl = 'http://localhost:3000'; // Change this
+### Prerequisites
+
+- Flutter SDK (>=3.2.0)
+- Backend API running and accessible
+- Staff account credentials (provided by administrator)
+
+### Configuration
+
+1. **Update API Base URL** in `lib/core/config.dart`:
+   ```dart
+   static const String baseUrl = 'http://10.0.2.2:3000'; // Android emulator
+   // OR
+   static const String baseUrl = 'http://192.168.1.XXX:3000'; // Physical device
+   ```
+
+2. **Install Dependencies**:
+   ```bash
+   flutter pub get
+   ```
+
+3. **Run the App**:
+   ```bash
+   flutter run
+   ```
+
+## 📱 Features
+
+### Dashboard
+- Overview of total bookings, pending leads, and today's revenue
+- Quick access to all major features
+
+### Bookings Management
+- View all bookings (staff endpoint: `/bookings/admin`)
+- Filter by status, search by customer
+- Update booking status, confirm, or cancel bookings
+- View booking details and traveler information
+
+### Leads Management
+- List all leads with filtering options
+- View lead details
+- Update lead status (NEW, CONTACTED, QUALIFIED, CONVERTED, LOST)
+- Assign leads to staff members
+- Track lead scores
+
+### Reports
+- Generate bookings reports by date range
+- Generate revenue reports
+- View historical reports
+- Export report data
+
+### Support Tickets
+- View all customer support tickets
+- Respond to tickets
+- Update ticket status
+- Track ticket history
+
+## 🔐 Authentication
+
+- **Login Endpoint**: `/auth/login/email`
+- **Required Role**: STAFF or ADMIN
+- **No Registration**: Staff accounts must be created by administrators via the admin panel or API
+
+## 📋 Staff API Endpoints Integrated
+
+### Bookings
+- `GET /bookings/admin` - List all bookings
+- `GET /bookings/:id` - Get booking details
+- `PATCH /bookings/:id` - Update booking step
+- `POST /bookings/:id/confirm` - Confirm booking
+- `POST /bookings/:id/cancel` - Cancel booking
+
+### Leads
+- `GET /leads` - List all leads
+- `GET /leads/:id` - Get lead details
+- `PATCH /leads/:id` - Update lead
+- `POST /leads/:id/assign` - Assign lead to staff
+
+### Reports
+- `POST /reports` - Create report
+- `GET /reports` - List reports
+- `GET /reports/bookings` - Bookings report
+- `GET /reports/revenue` - Revenue report
+- `GET /reports/:id` - Get report by ID
+
+### Support
+- `GET /support` - List all tickets
+- `GET /support/:id` - Get ticket details
+- `POST /support/:id/messages` - Send message
+- `PATCH /support/:id` - Update ticket status
+
+## 🛠️ Development
+
+### Project Structure
+
+```
+lib/
+├── core/
+│   ├── api_client.dart          # HTTP client with auth
+│   ├── auth_provider.dart       # Authentication state management
+│   ├── config.dart              # App configuration
+│   ├── models/                  # Data models
+│   └── services/                # API service classes
+│       ├── booking_service.dart
+│       ├── lead_service.dart
+│       ├── report_service.dart
+│       └── support_service.dart
+├── screens/
+│   ├── auth/
+│   │   └── login_screen.dart   # Staff login (no signup)
+│   ├── home/
+│   │   └── home_screen.dart     # Staff dashboard
+│   └── main_nav_shell.dart      # Bottom navigation
+└── app_router.dart              # Navigation routing
 ```
 
-**Important URLs for different setups:**
-- **Android Emulator**: `http://10.0.2.2:3000`
-- **iOS Simulator**: `http://localhost:3000`
-- **Physical Device**: Use your computer's IP (e.g., `http://192.168.1.100:3000`)
+## 🔒 Security Notes
 
-The API prefix `/api/v1` is configured automatically.
+- Access tokens are stored securely using `flutter_secure_storage`
+- Role validation happens on both client and server
+- All API requests include Bearer token authentication
+- Staff-only endpoints are enforced by backend middleware
 
-## Features
+## 📝 Notes
 
-- **Auth**: Login (email/password), Sign up (name, email, password, dark UI), token stored securely.
-- **Home**: “Discover the wonders of the world!”, Best Destination horizontal list (from List packages with `isFeatured=true`), View all → package list.
-- **Packages list**: “All Popular Trip Package” – cards with image, name, price, date range, rating, “X Person Joined”.
-- **Package detail**: Hero image, destination name, location, rating, price per person, image gallery strip, About Destination, Book Now (placeholder for Create booking API).
-- **Bottom nav**: Home, calendar, Search (orange FAB), Messages, Profile.
+- This app does NOT include user-facing features like package browsing or booking creation
+- This app does NOT include admin-only features like creating staff accounts or managing packages
+- All user-facing features should be in a separate customer app
+- All admin features should be in a separate admin panel
 
-## API Endpoints Integrated
+## 🐛 Troubleshooting
 
-### Authentication
-- `POST /auth/register` – Sign up (with error handling)
-- `POST /auth/login/email` – Login (with error handling)
-
-### Packages
-- `GET /packages?page=1&limit=10&isFeatured=true` – Featured packages (Best Destination)
-- `GET /packages?page=1&limit=20` – All packages
-- `GET /packages/:id` – Package by ID
-
-### Services Available (Ready to Use)
-- `BookingService` – Create bookings, get my bookings, confirm/cancel
-- `CityService` – List cities, get city by ID/slug
-- `ReviewService` – List reviews, create review
-- `PaymentService` – Create payment orders, get payment details
-
-All services use the same `ApiClient` with automatic authentication token handling.
-
-## Troubleshooting
-
-### Registration/Login Fails
-1. Check that backend is running on the configured URL
-2. Verify backend URL in `lib/core/config.dart` matches your setup
-3. Check error message in the SnackBar - it shows the actual API error
-4. Ensure backend database has the `name` field in User model (run migrations)
+### Login Fails with "Access denied"
+- Ensure you're using a STAFF or ADMIN account
+- Verify the account was created correctly in the backend
+- Check backend logs for authentication errors
 
 ### Network Errors
-- **Android Emulator**: Use `http://10.0.2.2:3000` instead of `localhost`
-- **Physical Device**: Use your computer's local IP address
-- Check that backend CORS allows your Flutter app origin
+- Verify backend URL in `lib/core/config.dart`
+- For Android emulator: use `http://10.0.2.2:3000`
+- For physical device: use your computer's local IP address
+- Ensure backend CORS allows your app origin
 
-### API Connection Issues
-- Verify backend is running: `curl http://localhost:3000/health`
-- Check API base URL in `lib/core/config.dart`
-- Ensure backend has proper CORS configuration
+### API Errors
+- Check backend logs for detailed error messages
+- Verify staff account has proper permissions
+- Ensure backend database migrations are applied
+
+## 📄 License
+
+See LICENSE file for details.

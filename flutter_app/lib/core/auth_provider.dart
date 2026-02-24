@@ -16,6 +16,7 @@ class AuthProvider with ChangeNotifier {
   static const _keyUserId = 'user_id';
   static const _keyUserName = 'user_name';
   static const _keyUserEmail = 'user_email';
+  static const _keyUserRole = 'user_role';
 
   UserModel? _user;
   bool _isLoading = true;
@@ -30,13 +31,26 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
     try {
       final accessToken = await _storage.read(key: _keyAccessToken);
-      final refreshToken = await _storage.read(key: _keyRefreshToken);
       final userId = await _storage.read(key: _keyUserId);
       final name = await _storage.read(key: _keyUserName);
       final email = await _storage.read(key: _keyUserEmail);
+      final role = await _storage.read(key: _keyUserRole);
       if (accessToken != null && accessToken.isNotEmpty && userId != null) {
-        _client.setAccessToken(accessToken);
-        _user = UserModel(id: userId, name: name, email: email, role: 'USER');
+        if (role == 'STAFF' || role == 'ADMIN') {
+          _client.setAccessToken(accessToken);
+          _user = UserModel(id: userId, name: name, email: email, role: role ?? 'STAFF');
+
+          // Validate token on app startup to avoid repeated 401 calls.
+          final me = await _client.get<Map<String, dynamic>>(
+            '/users/me',
+            fromJson: (d) => d as Map<String, dynamic>,
+          );
+          if (!me.success) {
+            await _clearStoredAuth(notify: false);
+          }
+        } else {
+          await _clearStoredAuth(notify: false);
+        }
       }
     } catch (_) {}
     _isLoading = false;
@@ -61,48 +75,12 @@ class AuthProvider with ChangeNotifier {
       
       try {
         final auth = AuthResponse.fromJson(res.data!);
-        await _persistAuth(auth);
-        _user = auth.user;
-        _client.setAccessToken(auth.accessToken);
-        notifyListeners();
-        return null; // Success
-      } catch (e) {
-        return 'Failed to parse auth response: ${e.toString()}';
-      }
-    } catch (e) {
-      return 'Network error: ${e.toString()}';
-    }
-  }
-
-  Future<String?> register(String name, String email, String password) async {
-    try {
-      final requestBody = {
-        'name': name.trim(),
-        'email': email.trim(),
-        'password': password,
-        'role': 'USER',
-      };
-      
-      final res = await _client.post<Map<String, dynamic>>(
-        '/auth/register',
-        body: requestBody,
-        fromJson: (d) => d as Map<String, dynamic>,
-      );
-      
-      if (!res.success) {
-        final errorMsg = res.error ?? 'Registration failed';
-        if (res.statusCode != null) {
-          return 'Error (${res.statusCode}): $errorMsg';
+        
+        // Only allow STAFF role login
+        if (auth.user.role != 'STAFF' && auth.user.role != 'ADMIN') {
+          return 'Access denied. This app is for staff members only.';
         }
-        return errorMsg;
-      }
-      
-      if (res.data == null) {
-        return 'Invalid response from server: no data received';
-      }
-      
-      try {
-        final auth = AuthResponse.fromJson(res.data!);
+        
         await _persistAuth(auth);
         _user = auth.user;
         _client.setAccessToken(auth.accessToken);
@@ -122,16 +100,24 @@ class AuthProvider with ChangeNotifier {
     await _storage.write(key: _keyUserId, value: auth.user.id);
     await _storage.write(key: _keyUserName, value: auth.user.name);
     await _storage.write(key: _keyUserEmail, value: auth.user.email);
+    await _storage.write(key: _keyUserRole, value: auth.user.role);
   }
 
   Future<void> logout() async {
+    await _clearStoredAuth(notify: true);
+  }
+
+  Future<void> _clearStoredAuth({required bool notify}) async {
     await _storage.delete(key: _keyAccessToken);
     await _storage.delete(key: _keyRefreshToken);
     await _storage.delete(key: _keyUserId);
     await _storage.delete(key: _keyUserName);
     await _storage.delete(key: _keyUserEmail);
+    await _storage.delete(key: _keyUserRole);
     _client.setAccessToken(null);
     _user = null;
-    notifyListeners();
+    if (notify) {
+      notifyListeners();
+    }
   }
 }

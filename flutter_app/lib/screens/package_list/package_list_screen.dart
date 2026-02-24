@@ -25,7 +25,9 @@ class _PackageListScreenState extends State<PackageListScreen> {
   }
 
   Future<void> _load() async {
-    final client = context.read<AuthProvider>().apiClient;
+    if (!mounted) return;
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final client = authProvider.apiClient;
     final service = PackageService(client);
     final result = await service.listPackages(page: 1, limit: 20);
     if (mounted) {
@@ -86,7 +88,7 @@ class _PackageCard extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.15), blurRadius: 12, offset: const Offset(0, 4)),
+            BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 12, offset: const Offset(0, 4)),
           ],
         ),
         child: Row(

@@ -1,5 +1,5 @@
 name: travel_pilgrimage_app
-description: Travel & Pilgrimage app - Flutter client for the API.
+description: Staff Portal - Flutter app for staff members to manage bookings, leads, and reports.
 publish_to: 'none'
 version: 1.0.0+1
 

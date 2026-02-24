@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:travel_pilgrimage_app/core/theme.dart';
 import 'home/home_screen.dart';
-import 'package_list/package_list_screen.dart';
+import 'bookings/bookings_screen.dart';
+import 'leads/leads_screen.dart';
+import 'reports/reports_screen.dart';
+import 'profile/profile_screen.dart';
 
 class MainNavShell extends StatefulWidget {
   const MainNavShell({super.key});
@@ -13,21 +15,18 @@ class MainNavShell extends StatefulWidget {
 
 class _MainNavShellState extends State<MainNavShell> {
   int _currentIndex = 0;
-  final _pages = [
+  final List<Widget> _pages = [
     const HomeScreen(),
-    const _PlaceholderScreen(title: 'Calendar'),
-    const _PlaceholderScreen(title: 'Search'),
-    const _PlaceholderScreen(title: 'Messages'),
-    const _PlaceholderScreen(title: 'Profile'),
+    const BookingsScreen(),
+    const LeadsScreen(),
+    const ReportsScreen(),
+    const ProfileScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _pages,
-      ),
+      body: _pages[_currentIndex],
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           color: Colors.white,
@@ -40,27 +39,26 @@ class _MainNavShellState extends State<MainNavShell> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _NavItem(
-                  icon: Icons.home_outlined,
-                  label: 'Home',
+                  icon: Icons.dashboard_outlined,
+                  label: 'Dashboard',
                   selected: _currentIndex == 0,
                   onTap: () => setState(() => _currentIndex = 0),
                 ),
                 _NavItem(
-                  icon: Icons.calendar_today_outlined,
-                  label: 'calendar',
+                  icon: Icons.book_online,
+                  label: 'Bookings',
                   selected: _currentIndex == 1,
                   onTap: () => setState(() => _currentIndex = 1),
                 ),
                 _NavItem(
-                  icon: Icons.search,
-                  label: '',
-                  selected: false,
-                  isSearch: true,
+                  icon: Icons.people_outline,
+                  label: 'Leads',
+                  selected: _currentIndex == 2,
                   onTap: () => setState(() => _currentIndex = 2),
                 ),
                 _NavItem(
-                  icon: Icons.chat_bubble_outline,
-                  label: 'Messages',
+                  icon: Icons.assessment,
+                  label: 'Reports',
                   selected: _currentIndex == 3,
                   onTap: () => setState(() => _currentIndex = 3),
                 ),
@@ -85,38 +83,15 @@ class _NavItem extends StatelessWidget {
     required this.label,
     required this.selected,
     required this.onTap,
-    this.isSearch = false,
   });
 
   final IconData icon;
   final String label;
   final bool selected;
   final VoidCallback onTap;
-  final bool isSearch;
 
   @override
   Widget build(BuildContext context) {
-    if (isSearch) {
-      return GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            color: AppColors.primary,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.4),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: const Icon(Icons.search, color: Colors.white, size: 28),
-        ),
-      );
-    }
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -145,13 +120,3 @@ class _NavItem extends StatelessWidget {
   }
 }
 
-class _PlaceholderScreen extends StatelessWidget {
-  const _PlaceholderScreen({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text(title, style: const TextStyle(fontSize: 18)));
-  }
-}

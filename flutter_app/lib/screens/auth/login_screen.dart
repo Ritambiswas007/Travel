@@ -93,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 32),
                   const Text(
-                    'Sign in',
+                    'Staff Portal',
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -102,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'Welcome back! Enter your credentials.',
+                    'Sign in to access the staff dashboard',
                     style: TextStyle(fontSize: 15, color: Color(0xFF9CA3AF)),
                   ),
                   const SizedBox(height: 40),
@@ -147,15 +147,26 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('Don\'t have an account? ', style: TextStyle(color: Color(0xFF9CA3AF))),
-                      GestureDetector(
-                        onTap: () => context.go('/signup'),
-                        child: const Text('Sign Up', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600)),
-                      ),
-                    ],
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1F2937),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.info_outline, color: Color(0xFF9CA3AF), size: 16),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Staff accounts are created by administrators. Contact your admin if you need access.',
+                            style: TextStyle(fontSize: 12, color: Color(0xFF9CA3AF)),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

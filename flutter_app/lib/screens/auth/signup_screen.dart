@@ -28,44 +28,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
-    setState(() => _isLoading = true);
-    final auth = context.read<AuthProvider>();
-    final error = await auth.register(
-      _nameController.text.trim(),
-      _emailController.text.trim(),
-      _passwordController.text,
-    );
-    setState(() => _isLoading = false);
+    // Staff registration is disabled - accounts are created by administrators
     if (mounted) {
-      if (error == null) {
-        context.go('/');
-      } else {
-        // Show detailed error message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Registration Failed',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 4),
-                Text(error, style: const TextStyle(fontSize: 12)),
-              ],
-            ),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 6),
-            action: SnackBarAction(
-              label: 'Dismiss',
-              textColor: Colors.white,
-              onPressed: () {},
-            ),
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Staff accounts are created by administrators. Please contact your admin for access.',
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
-        );
-      }
+          backgroundColor: Colors.orange,
+          duration: Duration(seconds: 5),
+        ),
+      );
     }
   }
 

@@ -28,7 +28,7 @@ class TravelPilgrimageApp extends StatelessWidget {
       child: Consumer<AuthProvider>(
         builder: (context, auth, _) {
           return MaterialApp.router(
-            title: 'Travel & Pilgrimage',
+            title: 'Staff Portal',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
