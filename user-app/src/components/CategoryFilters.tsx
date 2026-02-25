@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { citiesApi } from '@/api/endpoints';
 import styles from './CategoryFilters.module.css';
 
@@ -12,6 +12,8 @@ export function CategoryFilters() {
   const searchParams = useSearchParams();
   const cityId = searchParams.get('cityId') ?? '';
   const [cities, setCities] = useState<City[]>([]);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     citiesApi
@@ -24,6 +26,16 @@ export function CategoryFilters() {
       .catch(() => {});
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
   const setFilter = (id: string) => {
     const next = new URLSearchParams(searchParams.toString());
     if (id === 'all') {
@@ -31,36 +43,52 @@ export function CategoryFilters() {
     } else {
       next.set('cityId', id);
     }
+    setDropdownOpen(false);
     router.push(`/?${next.toString()}`, { scroll: false });
   };
 
-  const isActive = (id: string) => {
-    if (id === 'all') return !cityId;
-    return cityId === id;
-  };
-
-  const categories = [
-    { id: 'all', label: 'All' },
-    ...cities.map((c) => ({ id: c.id, label: c.name })),
-  ];
-
   return (
     <div className={styles.wrap}>
-      <div className={styles.scroll}>
-        {categories.map((cat) => (
-          <button
-            key={cat.id}
-            type="button"
-            onClick={() => setFilter(cat.id)}
-            className={isActive(cat.id) ? `${styles.item} ${styles.active}` : styles.item}
-          >
-            {cat.label}
-          </button>
-        ))}
+      <div className={styles.filterTriggerWrap} ref={dropdownRef}>
+        <button
+          type="button"
+          className={styles.filtersBtn}
+          onClick={() => setDropdownOpen(!dropdownOpen)}
+          aria-expanded={dropdownOpen}
+          aria-haspopup="listbox"
+          aria-label="Filter by city"
+        >
+          <FiltersIcon /> Filter by city {dropdownOpen ? '▴' : '▾'}
+        </button>
+        {dropdownOpen && (
+          <div className={styles.dropdown} role="listbox">
+            <button
+              type="button"
+              className={!cityId ? `${styles.dropdownItem} ${styles.active}` : styles.dropdownItem}
+              onClick={() => setFilter('all')}
+              role="option"
+              aria-selected={!cityId}
+            >
+              All
+            </button>
+            {cities.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                className={cityId === c.id ? `${styles.dropdownItem} ${styles.active}` : styles.dropdownItem}
+                onClick={() => setFilter(c.id)}
+                role="option"
+                aria-selected={cityId === c.id}
+              >
+                {c.name}
+              </button>
+            ))}
+            {cities.length === 0 && (
+              <div className={styles.dropdownEmpty}>Loading cities…</div>
+            )}
+          </div>
+        )}
       </div>
-      <button type="button" className={styles.filtersBtn}>
-        <FiltersIcon /> Filters
-      </button>
     </div>
   );
 }

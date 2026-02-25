@@ -1,9 +1,9 @@
 import { documentsRepository } from './repository';
 import { generateChecklistPdf } from '../../utils/pdf';
 import type { CreateDocumentTypeDto, UploadDocumentDto, UpdateDocumentStatusDto } from './dto';
-import { DocumentStatus } from '@prisma/client';
 import type { Prisma } from '@prisma/client';
 import { uploadDocument } from '../../utils/storage';
+import { isSupabaseEnabled } from '../../config/supabase';
 
 export const documentsService = {
   async createType(dto: CreateDocumentTypeDto) {
@@ -34,6 +34,14 @@ export const documentsService = {
   },
 
   async upload(userId: string, dto: UploadDocumentDto) {
+    if (!isSupabaseEnabled()) {
+      throw Object.assign(
+        new Error(
+          'Document storage is not configured. Add SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to a .env file in the backend project root (same folder as package.json), then restart the server.'
+        ),
+        { statusCode: 503, isOperational: true }
+      );
+    }
     const docType = await documentsRepository.findTypeById(dto.documentTypeId);
     if (!docType) {
       throw Object.assign(new Error('Document type not found'), { statusCode: 404 });
@@ -49,15 +57,21 @@ export const documentsService = {
       );
     } catch (e) {
       const message = e instanceof Error ? e.message : 'File upload failed';
-      // Surface a clear operational error when storage is not configured,
-      // instead of a generic 500 Internal Server Error.
       if (message.includes('Supabase storage not configured')) {
         throw Object.assign(
-          new Error('Document storage is not configured. Please set SUPABASE_* env vars or disable Supabase storage.'),
+          new Error('Document storage is not configured. Add SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to .env and restart the server.'),
           { statusCode: 503, isOperational: true }
         );
       }
-      throw Object.assign(new Error('File upload failed'), {
+      if (message.includes('fetch failed')) {
+        throw Object.assign(
+          new Error(
+            'Cannot reach Supabase. Check your internet connection and ensure your Supabase project is active (free projects can be paused in the dashboard).'
+          ),
+          { statusCode: 502, isOperational: true }
+        );
+      }
+      throw Object.assign(new Error(message.startsWith('Upload failed:') ? message : `File upload failed: ${message}`), {
         statusCode: 502,
         isOperational: true,
       });

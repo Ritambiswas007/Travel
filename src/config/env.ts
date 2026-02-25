@@ -1,6 +1,19 @@
 import dotenv from 'dotenv';
+import path from 'path';
+import fs from 'fs';
 
-dotenv.config();
+// Load .env from multiple possible locations so it's always found
+const candidates = [
+  path.join(process.cwd(), '.env'),
+  path.resolve(__dirname, '..', '..', '.env'),
+  path.resolve(__dirname, '..', '.env'),
+];
+for (const p of candidates) {
+  if (fs.existsSync(p)) {
+    dotenv.config({ path: p });
+    if (process.env.SUPABASE_URL || process.env.DATABASE_URL) break;
+  }
+}
 
 const env = process.env;
 
@@ -36,9 +49,11 @@ export const config = {
     databaseUrl: env.FIREBASE_DATABASE_URL,
   },
 
-  // Supabase Storage (conditionally enabled)
+  // Supabase Storage (enabled when URL + service role key are set, or when SUPABASE_ENABLED=true)
   supabase: {
-    enabled: env.SUPABASE_ENABLED === 'true',
+    enabled:
+      env.SUPABASE_ENABLED === 'true' ||
+      !!(env.SUPABASE_URL && env.SUPABASE_SERVICE_ROLE_KEY),
     url: env.SUPABASE_URL,
     anonKey: env.SUPABASE_ANON_KEY,
     serviceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY,

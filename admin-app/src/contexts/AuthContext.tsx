@@ -7,7 +7,7 @@ type AuthContextType = {
   user: User | null;
   token: string | null;
   login: (email: string, password: string) => Promise<string | null>;
-  logout: () => Promise<void>;
+  logout: () => void;
   isLoading: boolean;
 };
 
@@ -54,15 +54,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return null;
   }, []);
 
-  const logout = useCallback(async () => {
+  const logout = useCallback(() => {
     const t = localStorage.getItem(TOKEN_KEY);
     const rt = localStorage.getItem('admin_refresh_token');
-    if (t && rt) await authApi.logout(t, rt).catch(() => {});
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
     localStorage.removeItem('admin_refresh_token');
     setToken(null);
     setUser(null);
+    if (t && rt) authApi.logout(t, rt).catch(() => {});
   }, []);
 
   return (

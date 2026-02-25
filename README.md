@@ -284,6 +284,15 @@ See `prisma/schemas/` for detailed schema definitions.
 
 ## 🚀 Deployment
 
+### Deploy to Render (recommended)
+
+1. Push the repo to GitHub (ensure `prisma/migrations/` is committed).
+2. [Render](https://render.com) → **New +** → **Blueprint** → connect the repo.
+3. Apply the blueprint (creates DB + web service).
+4. Add optional env vars (Supabase, Redis, etc.) in Dashboard → Environment. See **[DEPLOY.md](./DEPLOY.md)** for the full list and steps.
+
+API will be at `https://<your-service>.onrender.com`; health check: `/health`.
+
 ### Production Checklist
 
 1. Set `NODE_ENV=production`

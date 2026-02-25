@@ -75,6 +75,11 @@ export async function request<T>(
           _retrying: true,
         });
       }
+      // Refresh failed (expired or invalid) – clear session so UI shows logged out
+      window.localStorage.removeItem('user_token');
+      window.localStorage.removeItem('user_refresh_token');
+      window.localStorage.removeItem('user_profile');
+      window.dispatchEvent(new Event('auth-session-expired'));
     }
 
     const success = res.ok && json.success !== false;

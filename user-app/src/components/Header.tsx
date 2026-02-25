@@ -8,12 +8,12 @@ import { authApi } from '@/api/endpoints';
 import styles from './Header.module.css';
 
 const navItems = [
-  { label: 'Stays', href: '/' },
-  { label: 'Bookings', href: '/bookings' },
-  { label: 'Support', href: '/support' },
-  { label: 'Visa', href: '/visa' },
-  { label: 'Documents', href: '/documents' },
-  { label: 'AI assistant', href: '/ai' },
+  { label: 'Stays', href: '/', icon: 'home' },
+  { label: 'Bookings', href: '/bookings', icon: 'bookings' },
+  { label: 'Support', href: '/support', icon: 'support' },
+  { label: 'Visa', href: '/visa', icon: 'visa' },
+  { label: 'Documents', href: '/documents', icon: 'documents' },
+  { label: 'AI assistant', href: '/ai', icon: 'ai' },
 ];
 
 export function Header() {
@@ -38,15 +38,17 @@ export function Header() {
 
   const closeDrawer = () => setShowDrawer(false);
 
-  const handleLogout = async () => {
-    if (accessToken && refreshToken) {
-      await authApi.logout(accessToken, refreshToken);
-    }
+  const handleLogout = () => {
+    const t = accessToken;
+    const rt = refreshToken;
     logout();
     setShowUserMenu(false);
     closeDrawer();
     router.push('/');
     router.refresh();
+    if (t && rt) {
+      authApi.logout(t, rt).catch(() => {});
+    }
   };
 
   const isActive = (href: string) => pathname === href;
@@ -65,23 +67,29 @@ export function Header() {
               href={item.href}
               className={isActive(item.href) ? `${styles.navItem} ${styles.active}` : styles.navItem}
             >
-              {item.label}
+              <NavIcon name={item.icon} />
+              <span>{item.label}</span>
             </Link>
           ))}
         </nav>
 
         <div className={styles.right}>
+          <span className={styles.currency}>IND | ₹ INR</span>
           <div className={styles.userMenuWrap}>
             <button
               type="button"
-              className={styles.userMenuBtn}
+              className={initialised && accessToken ? styles.accountBtn : styles.loginBtn}
               onClick={() => setShowUserMenu(!showUserMenu)}
               aria-expanded={showUserMenu}
               aria-haspopup="true"
               aria-label="Account menu"
             >
-              <MenuIcon />
               <AvatarIcon />
+              <span>
+                {!initialised || !accessToken
+                  ? 'Login / Register'
+                  : user?.name || user?.email || 'My Account'}
+              </span>
             </button>
             {showUserMenu && (
               <>
@@ -92,7 +100,7 @@ export function Header() {
                   onClick={() => setShowUserMenu(false)}
                   style={{ position: 'fixed', inset: 0, zIndex: 98 }}
                 />
-                <div className={styles.userMenu} role="menu">
+                <div className={styles.userMenu} role="menu" onClick={(e) => e.stopPropagation()}>
                   {!initialised || !accessToken ? (
                     <>
                       <Link href="/login" onClick={() => setShowUserMenu(false)} role="menuitem">
@@ -108,19 +116,34 @@ export function Header() {
                         Signed in as <strong>{user?.name || user?.email}</strong>
                       </div>
                       <hr />
-                      <Link href="/profile" onClick={() => setShowUserMenu(false)} role="menuitem">
-                        Profile
-                      </Link>
-                      <Link href="/bookings" onClick={() => setShowUserMenu(false)} role="menuitem">
-                        My bookings
-                      </Link>
-                      <Link href="/notifications" onClick={() => setShowUserMenu(false)} role="menuitem">
-                        Notifications
-                      </Link>
                       <button
                         type="button"
                         className={styles.userMenuItem}
-                        onClick={handleLogout}
+                        onClick={() => { setShowUserMenu(false); router.push('/profile'); }}
+                        role="menuitem"
+                      >
+                        Profile
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.userMenuItem}
+                        onClick={() => { setShowUserMenu(false); router.push('/bookings'); }}
+                        role="menuitem"
+                      >
+                        My bookings
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.userMenuItem}
+                        onClick={() => { setShowUserMenu(false); router.push('/notifications'); }}
+                        role="menuitem"
+                      >
+                        Notifications
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.userMenuItem}
+                        onClick={() => { handleLogout(); setShowUserMenu(false); }}
                         role="menuitem"
                       >
                         Sign out
@@ -206,12 +229,25 @@ export function Header() {
   );
 }
 
-function MenuIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
-    </svg>
-  );
+function NavIcon({ name }: { name: string }) {
+  const size = 18;
+  const props = { width: size, height: size, fill: 'currentColor', 'aria-hidden': true };
+  switch (name) {
+    case 'home':
+      return <svg viewBox="0 0 24 24" {...props}><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" /></svg>;
+    case 'bookings':
+      return <svg viewBox="0 0 24 24" {...props}><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z" /></svg>;
+    case 'support':
+      return <svg viewBox="0 0 24 24" {...props}><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z" /></svg>;
+    case 'visa':
+      return <svg viewBox="0 0 24 24" {...props}><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" /></svg>;
+    case 'documents':
+      return <svg viewBox="0 0 24 24" {...props}><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z" /></svg>;
+    case 'ai':
+      return <svg viewBox="0 0 24 24" {...props}><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" /></svg>;
+    default:
+      return null;
+  }
 }
 
 function AvatarIcon() {

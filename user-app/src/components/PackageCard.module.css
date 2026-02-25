@@ -2,25 +2,25 @@
   display: block;
   color: inherit;
   transition: transform var(--transition-normal);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
 }
 
 .card:hover {
   text-decoration: none;
   color: inherit;
-  transform: translateY(-2px);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
 }
 
 .imageWrap {
   position: relative;
   aspect-ratio: 4/3;
-  border-radius: 12px;
   overflow: hidden;
   background: var(--bg-secondary);
-  transition: box-shadow var(--transition-normal);
-}
-
-.card:hover .imageWrap {
-  box-shadow: var(--shadow-md);
 }
 
 .image {
@@ -31,40 +31,30 @@
 }
 
 .card:hover .image {
-  transform: scale(1.03);
-}
-
-.imagePlaceholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg-secondary);
-  color: var(--text-secondary);
-  font-size: 14px;
+  transform: scale(1.05);
 }
 
 .guestFav {
   position: absolute;
   top: 12px;
   left: 12px;
-  background: var(--brand);
+  background: var(--cta);
   color: #fff;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 10px;
   border-radius: 4px;
+  letter-spacing: 0.02em;
 }
 
 .heart {
   position: absolute;
   top: 12px;
   right: 12px;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border: none;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -79,26 +69,46 @@
   transform: scale(1.08);
 }
 
+.priceBadge {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  background: #fff;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 6px;
+  box-shadow: var(--shadow-sm);
+}
+
+.priceBadge span {
+  color: var(--brand);
+}
+
 .body {
-  padding: 10px 0 4px;
+  padding: 14px 16px;
 }
 
 .location {
   font-weight: 600;
-  font-size: 15px;
-  margin-bottom: 2px;
+  font-size: 1rem;
+  margin-bottom: 4px;
+  color: var(--text);
 }
 
 .price {
-  font-size: 15px;
+  font-size: 0.9rem;
   font-weight: 600;
+  color: var(--text-secondary);
 }
 
 .amount {
   font-weight: 700;
+  color: var(--text);
 }
 
 .unit {
   font-weight: 400;
-  color: var(--text);
+  color: var(--text-secondary);
 }

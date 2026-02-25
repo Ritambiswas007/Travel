@@ -138,10 +138,11 @@ export default function DocumentsPage() {
                   </select>
                 </label>
                 <label style={{ display: 'block', marginBottom: '0.75rem' }}>
-                  File
+                  File (PDF, JPEG, PNG, DOC, DOCX, XLS, XLSX, max 10MB)
                   <input
                     id="doc-file-input"
                     type="file"
+                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx,application/pdf,image/jpeg,image/png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     required
                     onChange={(e) => setSelectedFile(e.target.files?.[0] ?? null)}
                     style={{

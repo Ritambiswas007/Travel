@@ -5,7 +5,9 @@
 }
 
 .hero {
-  padding: 32px 0 40px;
+  padding: 48px 24px 56px;
+  background: linear-gradient(135deg, var(--hero-bg) 0%, var(--hero-bg-alt) 100%);
+  color: #fff;
 }
 
 .heroInner {
@@ -17,86 +19,117 @@
 }
 
 .heroContent {
-  max-width: 640px;
+  width: 100%;
   text-align: center;
 }
 
-.heroEyebrow {
-  font-size: 0.9rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 0.75rem;
-}
-
 .heroTitle {
-  font-size: clamp(2.6rem, 4vw, 3.4rem);
-  line-height: 1.05;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  line-height: 1.15;
   font-weight: 700;
-  letter-spacing: -0.03em;
-  color: var(--text);
-  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin-bottom: 0.5rem;
 }
 
 .heroSubtitle {
   font-size: 1rem;
-  line-height: 1.6;
-  color: var(--text-secondary);
-  max-width: 32rem;
-  margin: 0 auto 1.5rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 1.5rem;
 }
 
-.heroActions {
+.heroSearch {
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  justify-content: center;
+  gap: 0;
+  max-width: 640px;
+  margin: 0 auto 1.25rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  border: 1px solid var(--border);
 }
 
-.heroPrimary,
-.heroSecondary {
+.heroSearchInput {
+  flex: 1;
+  min-width: 140px;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 0.7rem 1.4rem;
-  border-radius: 999px;
-  font-weight: 600;
+  gap: 8px;
+  padding: 14px 18px;
   font-size: 0.95rem;
-  border: 1px solid transparent;
-  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+  color: var(--text-secondary);
+  background: #fff;
 }
 
-.heroPrimary {
-  background: #111827;
-  color: #f9fafb;
-  box-shadow: var(--shadow-md);
-}
-
-.heroPrimary:hover {
-  background: #020617;
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-lg);
-  text-decoration: none;
-}
-
-.heroSecondary {
-  background: rgba(255, 255, 255, 0.7);
-  border-color: var(--border);
+.heroSearchInput:first-of-type {
   color: var(--text);
 }
 
-.heroSecondary:hover {
+.heroSearch a.heroSearchInput:hover {
   background: var(--bg-secondary);
-  border-color: var(--text-muted);
   text-decoration: none;
+  color: var(--text);
+}
+
+.heroSearchDivider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--border);
+}
+
+.heroSearchBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 24px;
+  background: var(--cta);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: background var(--transition-fast);
+}
+
+.heroSearchBtn:hover {
+  background: var(--cta-hover);
+  text-decoration: none;
+  color: #fff;
+}
+
+.heroFeatures {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.25rem 2rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.heroFeatures span {
+  white-space: nowrap;
 }
 
 .content {
-  margin-top: 8px;
+  margin-top: 0;
+  padding-top: 24px;
+}
+
+.dealsHead {
+  margin-bottom: 8px;
+}
+
+.dealsTitle {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 16px;
 }
 
 .filtersPlaceholder {
-  height: 60px;
+  height: 48px;
 }
 
 .grid {

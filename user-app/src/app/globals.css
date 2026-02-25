@@ -1,10 +1,15 @@
 :root {
-  /* Brand & accent */
-  --brand: #0d9488;
-  --brand-hover: #0f766e;
-  --brand-muted: rgba(13, 148, 136, 0.12);
+  /* Akbar-style: blue primary, red CTA */
+  --brand: #2563eb;
+  --brand-hover: #1d4ed8;
+  --brand-muted: rgba(37, 99, 235, 0.1);
+  --cta: #dc2626;
+  --cta-hover: #b91c1c;
   --accent: #f59e0b;
   --accent-muted: rgba(245, 158, 11, 0.12);
+  /* Hero / nav dark */
+  --hero-bg: #1e3a5f;
+  --hero-bg-alt: #1e40af;
   /* Text */
   --text: #1e293b;
   --text-secondary: #64748b;
@@ -42,8 +47,8 @@ html,
 body {
   max-width: 100vw;
   min-height: 100vh;
-  font-family: 'Circular', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  background: linear-gradient(180deg, #dbeafe 0%, #fefce8 40%, #ffffff 100%);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
   color: var(--text);
   font-size: 14px;
   -webkit-font-smoothing: antialiased;

@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
 import { Header } from '@/components/Header';
+import { HeroSearch } from '@/components/HeroSearch';
 import { CategoryFilters } from '@/components/CategoryFilters';
 import { PackageCard } from '@/components/PackageCard';
 import { packagesApi } from '@/api/endpoints';
@@ -56,32 +57,38 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
         <section className={styles.hero}>
           <div className={styles.heroInner}>
             <div className={styles.heroContent}>
-              <p className={styles.heroEyebrow}>Travel &amp; Pilgrimage</p>
               <h1 className={styles.heroTitle}>
-                Peaceful journeys,
-                <br />
-                planned with clarity.
+                Holidays Made Easy
               </h1>
               <p className={styles.heroSubtitle}>
-                Discover curated stays and pilgrimage routes, compare options in one place, and keep every document and
-                booking in sync.
+                Peaceful journeys, planned with clarity. Discover curated stays and pilgrimage routes.
               </p>
-              <div className={styles.heroActions}>
-                <Link href="/book" className={styles.heroPrimary}>
-                  Explore stays
-                </Link>
-                <a href="#stays" className={styles.heroSecondary}>
-                  Browse all packages
-                </a>
+              <Suspense fallback={
+                <div className={styles.heroSearch}>
+                  <span className={styles.heroSearchInput}>Find Destination</span>
+                  <span className={styles.heroSearchDivider} />
+                  <span className={styles.heroSearchInput}>Anytime</span>
+                  <span className={styles.heroSearchBtn}>Search</span>
+                </div>
+              }>
+                <HeroSearch />
+              </Suspense>
+              <div className={styles.heroFeatures}>
+                <span>✔ Customised Trips</span>
+                <span>✔ Group Tours</span>
+                <span>✔ Pilgrimage Packages</span>
               </div>
             </div>
           </div>
         </section>
 
         <section id="stays" className={styles.content}>
-          <Suspense fallback={<div className={styles.filtersPlaceholder} />}>
-            <CategoryFilters />
-          </Suspense>
+          <div className={styles.dealsHead}>
+            <h2 className={styles.dealsTitle}>Exclusive Deals</h2>
+            <Suspense fallback={<div className={styles.filtersPlaceholder} />}>
+              <CategoryFilters />
+            </Suspense>
+          </div>
 
           <div className={styles.grid}>
             {packages.map((pkg) => (

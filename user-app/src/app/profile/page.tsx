@@ -73,18 +73,13 @@ export default function ProfilePage() {
     setMessage('');
   };
 
-  const handleLogoutAll = async () => {
-    if (!accessToken) return;
-    setMessage('');
-    setIsError(false);
-    const res = await authApi.logoutAll(accessToken);
-    if (!res.success) {
-      setMessage(res.error || 'Failed to logout from all devices');
-      setIsError(true);
-      return;
-    }
+  const handleLogoutAll = () => {
+    const t = accessToken;
     logout();
     router.push('/login');
+    if (t) {
+      authApi.logoutAll(t).catch(() => {});
+    }
   };
 
   if (loading) {

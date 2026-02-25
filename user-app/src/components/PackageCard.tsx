@@ -62,6 +62,11 @@ export function PackageCard({ pkg }: { pkg: PackageListItem }) {
         {pkg.isFeatured && (
           <span className={styles.guestFav}>Guest favourite</span>
         )}
+        {price != null && (
+          <div className={styles.priceBadge}>
+            STARTING <span>₹{price.toLocaleString()}/-</span> ONLY
+          </div>
+        )}
         <button
           type="button"
           className={styles.heart}

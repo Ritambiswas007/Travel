@@ -1,6 +1,6 @@
 # Render Blueprint: Travel & Pilgrimage API
-# Repo: https://github.com/Ritambiswas007/Travel
-# Deploy: connect this repo at render.com → New → Blueprint, then Apply.
+# Deploy: render.com → New → Blueprint → Connect repo → Select render.yaml → Apply
+# Then add optional env vars in Dashboard (Supabase, Redis, etc.) — see DEPLOY.md
 
 databases:
   - name: travel-pilgrimage-db
@@ -16,6 +16,8 @@ services:
     buildCommand: npm install && npx prisma generate && npm run build
     startCommand: npm start
     preDeployCommand: npx prisma migrate deploy
+
+    healthCheckPath: /health
 
     envVars:
       - key: NODE_ENV

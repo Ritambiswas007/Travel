@@ -39,8 +39,8 @@ coverage/
 .nyc_output/
 *.test.js.snap
 
-# Prisma
-prisma/migrations/
+# Prisma (keep migrations in repo for Render/production deploy)
+# prisma/migrations/
 
 # Temporary files
 tmp/

@@ -5,6 +5,11 @@ import { logger } from './utils/logger';
 const server = app.listen(config.port, () => {
   logger.info(`Server running on port ${config.port} (${config.nodeEnv})`);
   logger.info(`API prefix: ${config.apiPrefix}`);
+  if (config.supabase.enabled) {
+    logger.info('Supabase storage: enabled (document uploads will use Supabase)');
+  } else {
+    logger.warn('Supabase storage: disabled (set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in .env to enable document uploads)');
+  }
 });
 
 const shutdown = () => {
